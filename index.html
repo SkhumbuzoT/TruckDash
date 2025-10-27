@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleet Operations Dashboard</title>
+    <title>PrimeChain Fleet Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg-primary: #131a25;
+            --bg-secondary: #1b2433;
+            --bg-tertiary: #222e42;
+            --text-primary: #ffffff;
+            --text-secondary: #e4e4e7;
+            --text-tertiary: #a1a1aa;
+            --accent-primary: #06b6d4;
+            --accent-secondary: #3b82f6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --border-color: #2d3748;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,481 +31,512 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background-color: #111827;
-            color: #f9fafb;
-            line-height: 1.5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
         
         .container {
-            min-height: 100vh;
-            background-color: #111827;
-            color: #f9fafb;
-            padding: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
         }
         
-        .bg-dark-1 {
-            background-color: #111827;
+        .dashboard-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            backdrop-filter: blur(10px);
         }
         
-        .bg-dark-2 {
-            background-color: #1f2937;
-        }
-        
-        .bg-dark-3 {
-            background-color: #374151;
-        }
-        
-        .text-light {
-            color: #f9fafb;
-        }
-        
-        .text-light-2 {
-            color: #d1d5db;
-        }
-        
-        .text-light-3 {
-            color: #9ca3af;
-        }
-        
-        .text-light-4 {
-            color: #6b7280;
-        }
-        
-        .text-white {
-            color: #ffffff;
-        }
-        
-        .text-cyan {
-            color: #22d3ee;
-        }
-        
-        .text-cyan-dark {
-            color: #06b6d4;
-        }
-        
-        .text-purple {
-            color: #8b5cf6;
-        }
-        
-        .text-amber {
-            color: #f59e0b;
-        }
-        
-        .text-red {
-            color: #ef4444;
-        }
-        
-        .text-green {
-            color: #4ade80;
-        }
-        
-        .text-green-dark {
-            color: #10b981;
-        }
-        
-        .border {
-            border-width: 1px;
-        }
-        
-        .border-gray {
-            border-color: #374151;
-        }
-        
-        .border-left-4 {
-            border-left-width: 4px;
-        }
-        
-        .border-amber {
-            border-color: #f59e0b;
-        }
-        
-        .border-cyan {
-            border-color: #06b6d4;
-        }
-        
-        .rounded {
-            border-radius: 0.5rem;
-        }
-        
-        .rounded-full {
-            border-radius: 9999px;
-        }
-        
-        .p-2 {
-            padding: 0.5rem;
-        }
-        
-        .p-4 {
-            padding: 1rem;
-        }
-        
-        .p-6 {
-            padding: 1.5rem;
-        }
-        
-        .px-4 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        
-        .py-2 {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
-        
-        .mb-1 {
-            margin-bottom: 0.25rem;
-        }
-        
-        .mb-2 {
-            margin-bottom: 0.5rem;
-        }
-        
-        .mb-4 {
-            margin-bottom: 1rem;
-        }
-        
-        .mb-6 {
-            margin-bottom: 1.5rem;
-        }
-        
-        .mb-8 {
-            margin-bottom: 2rem;
-        }
-        
-        .mt-1 {
-            margin-top: 0.25rem;
-        }
-        
-        .mt-4 {
-            margin-top: 1rem;
-        }
-        
-        .ml-1 {
-            margin-left: 0.25rem;
-        }
-        
-        .mr-1 {
-            margin-right: 0.25rem;
-        }
-        
-        .flex {
+        .header-content {
             display: flex;
-        }
-        
-        .flex-1 {
-            flex: 1;
-        }
-        
-        .flex-shrink-0 {
-            flex-shrink: 0;
-        }
-        
-        .items-center {
             align-items: center;
-        }
-        
-        .items-start {
-            align-items: flex-start;
-        }
-        
-        .justify-between {
             justify-content: space-between;
         }
         
-        .justify-start {
-            justify-content: flex-start;
-        }
-        
-        .gap-2 {
-            gap: 0.5rem;
-        }
-        
-        .gap-3 {
+        .brand {
+            display: flex;
+            align-items: center;
             gap: 0.75rem;
         }
         
-        .gap-4 {
-            gap: 1rem;
-        }
-        
-        .gap-6 {
-            gap: 1.5rem;
-        }
-        
-        .grid {
-            display: grid;
-        }
-        
-        .grid-cols-1 {
-            grid-template-columns: 1fr;
-        }
-        
-        .grid-cols-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .grid-cols-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        
-        .grid-cols-5 {
-            grid-template-columns: repeat(5, 1fr);
-        }
-        
-        .col-span-2 {
-            grid-column: span 2;
-        }
-        
-        .space-y-2 > * + * {
-            margin-top: 0.5rem;
-        }
-        
-        .space-y-3 > * + * {
-            margin-top: 0.75rem;
-        }
-        
-        .w-2 {
-            width: 0.5rem;
-        }
-        
-        .w-3 {
-            width: 0.75rem;
-        }
-        
-        .h-2 {
-            height: 0.5rem;
-        }
-        
-        .h-3 {
-            height: 0.75rem;
-        }
-        
-        .h-16 {
-            height: 4rem;
-        }
-        
-        .h-80 {
-            height: 20rem;
-        }
-        
-        .text-sm {
-            font-size: 0.875rem;
-        }
-        
-        .text-xl {
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
             font-size: 1.25rem;
         }
         
-        .text-2xl {
+        .brand-text h1 {
             font-size: 1.5rem;
-        }
-        
-        .text-3xl {
-            font-size: 1.875rem;
-        }
-        
-        .font-bold {
             font-weight: 700;
+            margin-bottom: 0.125rem;
         }
         
-        .font-semibold {
-            font-weight: 600;
+        .brand-text p {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
         }
         
-        .shadow {
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
-        .shadow-lg {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .shadow-xl {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .relative {
-            position: relative;
-        }
-        
-        .absolute {
-            position: absolute;
-        }
-        
-        .inset-0 {
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-        
-        .bottom-4 {
-            bottom: 1rem;
-        }
-        
-        .left-4 {
-            left: 1rem;
-        }
-        
-        .right-4 {
-            right: 1rem;
-        }
-        
-        .opacity-20 {
-            opacity: 0.2;
-        }
-        
-        .overflow-hidden {
-            overflow: hidden;
-        }
-        
-        .transition {
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            border-radius: 8px;
             transition: all 0.2s;
         }
         
-        .bg-cyan {
-            background-color: #06b6d4;
-        }
-        
-        .bg-purple {
-            background-color: #8b5cf6;
-        }
-        
-        .bg-amber {
-            background-color: #f59e0b;
-        }
-        
-        .bg-red {
-            background-color: #ef4444;
-        }
-        
-        .bg-green {
-            background-color: #10b981;
-        }
-        
-        .bg-amber-20 {
-            background-color: rgba(245, 158, 11, 0.2);
-        }
-        
-        .bg-green-20 {
-            background-color: rgba(16, 185, 129, 0.2);
+        .theme-toggle:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-tertiary);
         }
         
         select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ca3af%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.7rem top 50%;
-            background-size: 0.65rem auto;
-            padding-right: 2.5rem;
-        }
-        
-        select:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.5);
-        }
-        
-        .btn {
-            background-color: #06b6d4;
-            color: white;
-            border: none;
-            border-radius: 9999px;
-            padding: 0.5rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .btn:hover {
-            background-color: #22d3ee;
-            transform: scale(1.1);
+        select:hover {
+            border-color: var(--accent-primary);
+        }
+        
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+        
+        .dashboard-content {
+            padding: 2rem 0;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .section-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.25rem;
+        }
+        
+        .kpi-card {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+        
+        .kpi-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        
+        .kpi-text {
+            flex: 1;
+        }
+        
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .kpi-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .kpi-unit {
+            font-size: 1.25rem;
+            color: var(--text-tertiary);
+            margin-left: 0.25rem;
+        }
+        
+        .kpi-trend {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .trend-up {
+            color: var(--accent-success);
+        }
+        
+        .trend-down {
+            color: var(--accent-danger);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.25s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .card-icon {
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+        }
+        
+        .map-container {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .map-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%2306b6d4" stroke-width="1"/><path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="%2306b6d4" stroke-width="0.5"/><path d="M40,40 L60,40 L60,60 L40,60 Z" fill="none" stroke="%2306b6d4" stroke-width="0.25"/></svg>');
+            background-size: 100px 100px;
+        }
+        
+        .truck-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
+        }
+        
+        .truck-marker:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 20px rgba(6, 182, 212, 0.8);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+            }
+        }
+        
+        .truck-info {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--accent-primary);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+        
+        .truck-info-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .truck-id {
+            font-weight: 600;
+            color: var(--accent-primary);
         }
         
         .close-btn {
             background: none;
             border: none;
-            color: #9ca3af;
+            color: var(--text-tertiary);
             cursor: pointer;
             font-size: 1.25rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
         
         .close-btn:hover {
-            color: white;
+            color: var(--text-primary);
+            background-color: var(--bg-tertiary);
         }
         
-        .hidden {
-            display: none;
+        .truck-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .truck-detail {
+            font-size: 0.875rem;
+        }
+        
+        .truck-detail-label {
+            color: var(--text-tertiary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .truck-detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .maintenance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .maintenance-item {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid;
+            transition: all 0.2s;
+        }
+        
+        .maintenance-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .maintenance-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .maintenance-truck {
+            font-weight: 600;
+        }
+        
+        .maintenance-days {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .days-ok {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+        
+        .days-warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+        
+        .maintenance-service {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .maintenance-date {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .financial-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .cost-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .cost-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .cost-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .cost-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .cost-name {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .cost-value {
+            font-weight: 600;
+        }
+        
+        .dashboard-footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
         }
         
         /* Responsive Design */
-        @media (max-width: 640px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .text-3xl {
-                font-size: 1.5rem;
-            }
-            
-            .text-xl {
-                font-size: 1.125rem;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .header-filters {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
+        @media (min-width: 768px) {
             .kpi-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-            
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .financial-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .col-span-2 {
-                grid-column: 1;
-            }
-        }
-        
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .kpi-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .main-grid {
-                grid-template-columns: 2fr 1fr;
-            }
-            
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .financial-grid {
-                grid-template-columns: 1fr 2fr;
-            }
-        }
-        
-        @media (min-width: 1025px) {
-            .kpi-grid {
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .main-grid {
@@ -503,25 +551,47 @@
                 grid-template-columns: 1fr 2fr;
             }
         }
+        
+        @media (min-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        /* Loading animation */
+        .loading {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between mb-6 header-content">
-                <div>
-                    <h1 class="text-3xl font-bold text-white mb-2">Fleet Operations Dashboard</h1>
-                    <p class="text-light-3">Real-time fleet performance and analytics</p>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="brand">
+                    <div class="logo">PC</div>
+                    <div class="brand-text">
+                        <h1>PrimeChain Fleet</h1>
+                        <p>Operations Dashboard</p>
+                    </div>
                 </div>
-                <div class="flex gap-3 header-filters">
-                    <select class="bg-dark-2 border border-gray rounded p-2 text-white" id="dateRange">
+                <div class="header-controls">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <select id="dateRange">
                         <option value="today">Today</option>
                         <option value="7days" selected>Last 7 Days</option>
                         <option value="30days">Last 30 Days</option>
                         <option value="90days">Last 90 Days</option>
                     </select>
-                    <select class="bg-dark-2 border border-gray rounded p-2 text-white" id="filterDriver">
+                    <select id="filterDriver">
                         <option value="all" selected>All Drivers</option>
                         <option value="john">John Smith</option>
                         <option value="sarah">Sarah Johnson</option>
@@ -530,305 +600,342 @@
                 </div>
             </div>
         </div>
-
-        <!-- KPI Cards -->
-        <div class="grid kpi-grid gap-4 mb-8">
-            <div class="bg-dark-2 rounded p-6 border border-gray">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
-                            <i class="fas fa-truck"></i>
-                            <span>Active Trucks</span>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="container">
+            <!-- Alerts Section -->
+            <div class="section loading" style="animation-delay: 0.1s">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Active Alerts</h2>
+                        <p class="section-subtitle">Issues requiring attention</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-exclamation-triangle card-icon"></i>
+                        <h3 class="card-title">4 Active Alerts</h3>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-sm text-light-2 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-amber"></span>
+                            TRK-003 - Service due in 2 days
                         </div>
-                        <div class="text-3xl font-bold text-white mb-1">
-                            24
+                        <div class="text-sm text-light-2 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red"></span>
+                            TRK-007 - Insurance expires tomorrow
                         </div>
-                        <div class="text-sm text-green">
-                            ↑ 8% vs last week
+                        <div class="text-sm text-light-2 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-cyan-dark"></span>
+                            TRK-001 - Fuel efficiency below target
+                        </div>
+                        <div class="text-sm text-light-2 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-amber"></span>
+                            TRK-005 - Trip unprofitable (Route A-B)
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-cyan"></div>
                 </div>
             </div>
-            <div class="bg-dark-2 rounded p-6 border border-gray">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Distance Covered</span>
-                        </div>
-                        <div class="text-3xl font-bold text-white mb-1">
-                            12,580<span class="text-xl text-light-3 ml-1">km</span>
-                        </div>
-                        <div class="text-sm text-green">
-                            ↑ 12% vs last week
+            
+            <!-- KPI Section -->
+            <div class="section loading" style="animation-delay: 0.2s">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Performance Overview</h2>
+                        <p class="section-subtitle">Key metrics for fleet operations</p>
+                    </div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-content">
+                            <div class="kpi-text">
+                                <div class="kpi-name">
+                                    <i class="fas fa-truck"></i>
+                                    <span>Active Trucks</span>
+                                </div>
+                                <div class="kpi-value">24</div>
+                                <div class="kpi-trend trend-up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>8% vs last week</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-purple"></div>
-                </div>
-            </div>
-            <div class="bg-dark-2 rounded p-6 border border-gray">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
-                            <i class="fas fa-gas-pump"></i>
-                            <span>Avg Fuel Cost</span>
-                        </div>
-                        <div class="text-3xl font-bold text-white mb-1">
-                            2.45<span class="text-xl text-light-3 ml-1">$/km</span>
-                        </div>
-                        <div class="text-sm text-red">
-                            ↓ 3% vs last week
+                    <div class="kpi-card">
+                        <div class="kpi-content">
+                            <div class="kpi-text">
+                                <div class="kpi-name">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Distance Covered</span>
+                                </div>
+                                <div class="kpi-value">12,580<span class="kpi-unit">km</span></div>
+                                <div class="kpi-trend trend-up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>12% vs last week</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-amber"></div>
-                </div>
-            </div>
-            <div class="bg-dark-2 rounded p-6 border border-gray">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
-                            <i class="fas fa-clock"></i>
-                            <span>Downtime Hours</span>
-                        </div>
-                        <div class="text-3xl font-bold text-white mb-1">
-                            18<span class="text-xl text-light-3 ml-1">hrs</span>
-                        </div>
-                        <div class="text-sm text-red">
-                            ↓ 15% vs last week
+                    <div class="kpi-card">
+                        <div class="kpi-content">
+                            <div class="kpi-text">
+                                <div class="kpi-name">
+                                    <i class="fas fa-gas-pump"></i>
+                                    <span>Avg Fuel Cost</span>
+                                </div>
+                                <div class="kpi-value">2.45<span class="kpi-unit">$/km</span></div>
+                                <div class="kpi-trend trend-down">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>3% vs last week</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-red"></div>
-                </div>
-            </div>
-            <div class="bg-dark-2 rounded p-6 border border-gray">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Profit per KM</span>
-                        </div>
-                        <div class="text-3xl font-bold text-white mb-1">
-                            1.23<span class="text-xl text-light-3 ml-1">$</span>
-                        </div>
-                        <div class="text-sm text-green">
-                            ↑ 5% vs last week
+                    <div class="kpi-card">
+                        <div class="kpi-content">
+                            <div class="kpi-text">
+                                <div class="kpi-name">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Downtime Hours</span>
+                                </div>
+                                <div class="kpi-value">18<span class="kpi-unit">hrs</span></div>
+                                <div class="kpi-trend trend-down">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>15% vs last week</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-green"></div>
+                    <div class="kpi-card">
+                        <div class="kpi-content">
+                            <div class="kpi-text">
+                                <div class="kpi-name">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>Profit per KM</span>
+                                </div>
+                                <div class="kpi-value">1.23<span class="kpi-unit">$</span></div>
+                                <div class="kpi-trend trend-up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>5% vs last week</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="grid main-grid gap-6 mb-6">
-            <!-- Map View -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-cyan-dark"></i>
-                    Fleet Location Overview
-                </h2>
-                <div class="bg-dark-1 rounded h-80 flex items-center justify-center border border-gray relative overflow-hidden">
-                    <!-- Simulated Map -->
-                    <div class="absolute inset-0 opacity-20">
-                        <svg viewBox="0 0 400 300" class="w-full h-full">
-                            <path d="M 50 150 Q 100 100, 150 150 T 250 150 T 350 150" stroke="#4ade80" stroke-width="3" fill="none" opacity="0.5"/>
-                            <path d="M 50 200 L 350 200" stroke="#06b6d4" stroke-width="3" opacity="0.5"/>
-                            <path d="M 200 50 L 200 250" stroke="#f59e0b" stroke-width="3" opacity="0.5"/>
-                        </svg>
+            
+            <!-- Map & Maintenance Section -->
+            <div class="section loading" style="animation-delay: 0.3s">
+                <div class="main-grid">
+                    <!-- Map View -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-map-marker-alt card-icon"></i>
+                            <h3 class="card-title">Fleet Location Overview</h3>
+                        </div>
+                        <div class="map-container">
+                            <div class="map-background"></div>
+                            
+                            <!-- Truck Markers -->
+                            <div class="truck-marker" style="top: 30%; left: 20%;" onclick="selectTruck('TRK-001')">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="truck-marker" style="top: 50%; left: 45%;" onclick="selectTruck('TRK-002')">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="truck-marker" style="top: 65%; left: 70%;" onclick="selectTruck('TRK-004')">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            
+                            <!-- Selected Truck Info -->
+                            <div id="selectedTruckInfo" class="truck-info hidden">
+                                <div class="truck-info-header">
+                                    <h3 class="truck-id" id="truckId">TRK-001</h3>
+                                    <button class="close-btn" onclick="closeTruckInfo()">✕</button>
+                                </div>
+                                <div class="truck-details">
+                                    <div class="truck-detail">
+                                        <div class="truck-detail-label">Driver</div>
+                                        <div class="truck-detail-value" id="truckDriver">John Smith</div>
+                                    </div>
+                                    <div class="truck-detail">
+                                        <div class="truck-detail-label">Location</div>
+                                        <div class="truck-detail-value" id="truckLocation">Highway 401</div>
+                                    </div>
+                                    <div class="truck-detail">
+                                        <div class="truck-detail-label">Status</div>
+                                        <div class="truck-detail-value">Active</div>
+                                    </div>
+                                    <div class="truck-detail">
+                                        <div class="truck-detail-label">Last Update</div>
+                                        <div class="truck-detail-value">2 hours ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color bg-cyan"></div>
+                                <span>Active (3)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color bg-amber"></div>
+                                <span>Idle (1)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color bg-red"></div>
+                                <span>Maintenance (1)</span>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- Truck Markers -->
-                    <div class="absolute inset-0 p-8">
-                        <button class="btn absolute" style="left: 20%; top: 30%;" onclick="selectTruck('TRK-001')">
-                            <i class="fas fa-truck"></i>
-                        </button>
-                        <button class="btn absolute" style="left: 38%; top: 42%;" onclick="selectTruck('TRK-002')">
-                            <i class="fas fa-truck"></i>
-                        </button>
-                        <button class="btn absolute" style="left: 56%; top: 54%;" onclick="selectTruck('TRK-004')">
-                            <i class="fas fa-truck"></i>
-                        </button>
-                    </div>
-
-                    <!-- Selected Truck Info -->
-                    <div id="selectedTruckInfo" class="absolute bottom-4 left-4 right-4 bg-dark-2 border border-cyan rounded p-4 shadow-xl hidden">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-bold text-cyan" id="truckId">TRK-001</h3>
-                                <p class="text-sm text-light-2" id="truckDriver">Driver: John Smith</p>
-                                <p class="text-sm text-light-3" id="truckLocation">Location: Highway 401</p>
-                            </div>
-                            <button class="close-btn" onclick="closeTruckInfo()">✕</button>
+                    <!-- Maintenance Schedule -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-cog card-icon"></i>
+                            <h3 class="card-title">Maintenance Schedule</h3>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Truck Status Legend -->
-                <div class="mt-4 flex gap-6 text-sm">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-cyan"></div>
-                        <span class="text-light-2">Active (3)</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-amber"></div>
-                        <span class="text-light-2">Idle (1)</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red"></div>
-                        <span class="text-light-2">Maintenance (1)</span>
+                        <div class="maintenance-list">
+                            <div class="maintenance-item" style="border-left-color: #10b981">
+                                <div class="maintenance-header">
+                                    <h4 class="maintenance-truck">TRK-001</h4>
+                                    <span class="maintenance-days days-ok">9 days</span>
+                                </div>
+                                <p class="maintenance-service">Oil Change</p>
+                                <p class="maintenance-date">Due: 2025-11-05</p>
+                            </div>
+                            <div class="maintenance-item" style="border-left-color: #f59e0b">
+                                <div class="maintenance-header">
+                                    <h4 class="maintenance-truck">TRK-003</h4>
+                                    <span class="maintenance-days days-warning">2 days</span>
+                                </div>
+                                <p class="maintenance-service">Brake Inspection</p>
+                                <p class="maintenance-date">Due: 2025-10-29</p>
+                            </div>
+                            <div class="maintenance-item" style="border-left-color: #f59e0b">
+                                <div class="maintenance-header">
+                                    <h4 class="maintenance-truck">TRK-007</h4>
+                                    <span class="maintenance-days days-warning">5 days</span>
+                                </div>
+                                <p class="maintenance-service">Annual Service</p>
+                                <p class="maintenance-date">Due: 2025-11-01</p>
+                            </div>
+                            <div class="maintenance-item" style="border-left-color: #10b981">
+                                <div class="maintenance-header">
+                                    <h4 class="maintenance-truck">TRK-002</h4>
+                                    <span class="maintenance-days days-ok">19 days</span>
+                                </div>
+                                <p class="maintenance-service">Tire Rotation</p>
+                                <p class="maintenance-date">Due: 2025-11-15</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Maintenance Schedule -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-cog text-purple"></i>
-                    Maintenance Schedule
-                </h2>
-                <div class="space-y-3">
-                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #10b981">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-white">TRK-001</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-green-20 text-green-dark">9 days</span>
-                        </div>
-                        <p class="text-sm text-light-3">Oil Change</p>
-                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-05</p>
-                    </div>
-                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #f59e0b">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-white">TRK-003</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-amber-20 text-amber">2 days</span>
-                        </div>
-                        <p class="text-sm text-light-3">Brake Inspection</p>
-                        <p class="text-xs text-light-4 mt-1">Due: 2025-10-29</p>
-                    </div>
-                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #f59e0b">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-white">TRK-007</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-amber-20 text-amber">5 days</span>
-                        </div>
-                        <p class="text-sm text-light-3">Annual Service</p>
-                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-01</p>
-                    </div>
-                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #10b981">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-white">TRK-002</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-green-20 text-green-dark">19 days</span>
-                        </div>
-                        <p class="text-sm text-light-3">Tire Rotation</p>
-                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-15</p>
+            
+            <!-- Charts Section -->
+            <div class="section loading" style="animation-delay: 0.4s">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Performance Analytics</h2>
+                        <p class="section-subtitle">Trends and efficiency metrics</p>
                     </div>
                 </div>
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line card-icon"></i>
+                            <h3 class="card-title">Fuel Efficiency Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="fuelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-road card-icon"></i>
+                            <h3 class="card-title">Trip Performance by Truck</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="tripChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Analytics -->
+            <div class="section loading" style="animation-delay: 0.5s">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Financial Analytics</h2>
+                        <p class="section-subtitle">Cost breakdown and profit trends</p>
+                    </div>
+                </div>
+                <div class="financial-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie card-icon"></i>
+                            <h3 class="card-title">Cost Breakdown</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                        <div class="cost-list">
+                            <div class="cost-item">
+                                <div class="cost-label">
+                                    <div class="cost-color" style="background-color: #06b6d4"></div>
+                                    <span class="cost-name">Fuel</span>
+                                </div>
+                                <span class="cost-value">$45,200</span>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">
+                                    <div class="cost-color" style="background-color: #8b5cf6"></div>
+                                    <span class="cost-name">Maintenance</span>
+                                </div>
+                                <span class="cost-value">$12,800</span>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">
+                                    <div class="cost-color" style="background-color: #f59e0b"></div>
+                                    <span class="cost-name">Tolls</span>
+                                </div>
+                                <span class="cost-value">$5,400</span>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">
+                                    <div class="cost-color" style="background-color: #10b981"></div>
+                                    <span class="cost-name">Driver Wages</span>
+                                </div>
+                                <span class="cost-value">$38,600</span>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">
+                                    <div class="cost-color" style="background-color: #ef4444"></div>
+                                    <span class="cost-name">Insurance</span>
+                                </div>
+                                <span class="cost-value">$8,900</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar card-icon"></i>
+                            <h3 class="card-title">Monthly Profit & Expense Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="profitChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="dashboard-footer loading" style="animation-delay: 0.6s">
+                <p>PrimeChain Fleet Dashboard v1.2 • © 2025 PrimeChain Logistics</p>
             </div>
         </div>
-
-        <!-- Charts Row -->
-        <div class="grid charts-grid gap-6 mb-6">
-            <!-- Fuel Efficiency Trend -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-line text-green-dark"></i>
-                    Fuel Efficiency Trend
-                </h2>
-                <div class="h-64">
-                    <canvas id="fuelChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Trip Performance -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4">Trip Performance by Truck</h2>
-                <div class="h-64">
-                    <canvas id="tripChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Financial Analytics -->
-        <div class="grid financial-grid gap-6">
-            <!-- Cost Breakdown -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4">Cost Breakdown</h2>
-                <div class="h-64">
-                    <canvas id="costChart"></canvas>
-                </div>
-                <div class="mt-4 space-y-2">
-                    <div class="flex justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-cyan"></div>
-                            <span class="text-light-2">Fuel</span>
-                        </div>
-                        <span class="text-white font-semibold">$45,200</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-purple"></div>
-                            <span class="text-light-2">Maintenance</span>
-                        </div>
-                        <span class="text-white font-semibold">$12,800</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-amber"></div>
-                            <span class="text-light-2">Tolls</span>
-                        </div>
-                        <span class="text-white font-semibold">$5,400</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-green"></div>
-                            <span class="text-light-2">Driver Wages</span>
-                        </div>
-                        <span class="text-white font-semibold">$38,600</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red"></div>
-                            <span class="text-light-2">Insurance</span>
-                        </div>
-                        <span class="text-white font-semibold">$8,900</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profit Trend -->
-            <div class="bg-dark-2 rounded border border-gray p-6">
-                <h2 class="text-xl font-bold text-white mb-4">Monthly Profit & Expense Trend</h2>
-                <div class="h-64">
-                    <canvas id="profitChart"></canvas>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Alerts Bar -->
-            <div class="bg-dark-2 border-left-4 border-amber rounded p-4 mb-6">
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-exclamation-triangle text-amber flex-shrink-0 mt-1"></i>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-white mb-2">Active Alerts (4)</h3>
-                        <div class="space-y-2">
-                            <div class="text-sm text-light-2 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber"></span>
-                                TRK-003 - Service due in 2 days
-                            </div>
-                            <div class="text-sm text-light-2 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-red"></span>
-                                TRK-007 - Insurance expires tomorrow
-                            </div>
-                            <div class="text-sm text-light-2 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-cyan-dark"></span>
-                                TRK-001 - Fuel efficiency below target
-                            </div>
-                            <div class="text-sm text-light-2 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber"></span>
-                                TRK-005 - Trip unprofitable (Route A-B)
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
 
     <script>
@@ -846,8 +953,8 @@
             const truckLocation = document.getElementById('truckLocation');
             
             truckIdElement.textContent = truckId;
-            truckDriver.textContent = `Driver: ${trucks[truckId].driver}`;
-            truckLocation.textContent = `Location: ${trucks[truckId].location}`;
+            truckDriver.textContent = trucks[truckId].driver;
+            truckLocation.textContent = trucks[truckId].location;
             
             info.classList.remove('hidden');
         }
@@ -860,6 +967,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Fuel Efficiency Chart
             const fuelCtx = document.getElementById('fuelChart').getContext('2d');
+            const fuelGradient = fuelCtx.createLinearGradient(0, 0, 0, 400);
+            fuelGradient.addColorStop(0, "rgba(6,182,212,0.6)");
+            fuelGradient.addColorStop(1, "rgba(6,182,212,0)");
+            
             new Chart(fuelCtx, {
                 type: 'line',
                 data: {
@@ -869,7 +980,8 @@
                             label: 'Km/L',
                             data: [6.8, 7.2, 6.5, 7.4, 7.1, 6.9, 7.3],
                             borderColor: '#06b6d4',
-                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            backgroundColor: fuelGradient,
+                            borderWidth: 3,
                             tension: 0.4,
                             fill: true
                         },
@@ -879,6 +991,7 @@
                             borderColor: '#f59e0b',
                             borderDash: [5, 5],
                             backgroundColor: 'transparent',
+                            borderWidth: 2,
                             tension: 0.4
                         }
                     ]
@@ -888,18 +1001,31 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: '#9ca3af' }
+                            labels: { color: '#a1a1aa' }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} km/L`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: '#2d3748' },
+                            ticks: { color: '#a1a1aa' }
                         },
                         y: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: '#2d3748' },
+                            ticks: { color: '#a1a1aa' }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
@@ -928,18 +1054,32 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: '#9ca3af' }
+                            labels: { color: '#a1a1aa' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 1) {
+                                        return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} km`;
+                                    }
+                                    return `${context.dataset.label}: ${context.parsed.y}`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: '#2d3748' },
+                            ticks: { color: '#a1a1aa' }
                         },
                         y: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: '#2d3748' },
+                            ticks: { color: '#a1a1aa' }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
@@ -958,14 +1098,28 @@
                             '#f59e0b',
                             '#10b981',
                             '#ef4444'
-                        ]
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%',
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
@@ -999,23 +1153,34 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: '#9ca3af' }
+                            labels: { color: '#a1a1aa' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: '#374151' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: '#2d3748' },
+                            ticks: { color: '#a1a1aa' }
                         },
                         y: {
-                            grid: { color: '#374151' },
+                            grid: { color: '#2d3748' },
                             ticks: { 
-                                color: '#9ca3af',
+                                color: '#a1a1aa',
                                 callback: function(value) {
                                     return '$' + value.toLocaleString();
                                 }
                             }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
