@@ -20,35 +20,38 @@
             line-height: 1.5;
         }
         
-        .min-h-screen {
+        .container {
             min-height: 100vh;
+            background-color: #111827;
+            color: #f9fafb;
+            padding: 1.5rem;
         }
         
-        .bg-gray-900 {
+        .bg-dark-1 {
             background-color: #111827;
         }
         
-        .bg-gray-800 {
+        .bg-dark-2 {
             background-color: #1f2937;
         }
         
-        .bg-gray-700 {
+        .bg-dark-3 {
             background-color: #374151;
         }
         
-        .text-gray-100 {
+        .text-light {
             color: #f9fafb;
         }
         
-        .text-gray-300 {
+        .text-light-2 {
             color: #d1d5db;
         }
         
-        .text-gray-400 {
+        .text-light-3 {
             color: #9ca3af;
         }
         
-        .text-gray-500 {
+        .text-light-4 {
             color: #6b7280;
         }
         
@@ -56,31 +59,31 @@
             color: #ffffff;
         }
         
-        .text-cyan-400 {
+        .text-cyan {
             color: #22d3ee;
         }
         
-        .text-cyan-500 {
+        .text-cyan-dark {
             color: #06b6d4;
         }
         
-        .text-purple-500 {
+        .text-purple {
             color: #8b5cf6;
         }
         
-        .text-amber-500 {
+        .text-amber {
             color: #f59e0b;
         }
         
-        .text-red-500 {
+        .text-red {
             color: #ef4444;
         }
         
-        .text-green-400 {
+        .text-green {
             color: #4ade80;
         }
         
-        .text-green-500 {
+        .text-green-dark {
             color: #10b981;
         }
         
@@ -88,23 +91,23 @@
             border-width: 1px;
         }
         
-        .border-gray-700 {
+        .border-gray {
             border-color: #374151;
         }
         
-        .border-l-4 {
+        .border-left-4 {
             border-left-width: 4px;
         }
         
-        .border-amber-500 {
+        .border-amber {
             border-color: #f59e0b;
         }
         
-        .border-cyan-500 {
+        .border-cyan {
             border-color: #06b6d4;
         }
         
-        .rounded-lg {
+        .rounded {
             border-radius: 0.5rem;
         }
         
@@ -175,7 +178,7 @@
         }
         
         .flex-1 {
-            flex: 1 1 0%;
+            flex: 1;
         }
         
         .flex-shrink-0 {
@@ -219,15 +222,23 @@
         }
         
         .grid-cols-1 {
-            grid-template-columns: repeat(1, minmax(0, 1fr));
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
         }
         
         .grid-cols-5 {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(5, 1fr);
         }
         
         .col-span-2 {
-            grid-column: span 2 / span 2;
+            grid-column: span 2;
         }
         
         .space-y-2 > * + * {
@@ -270,6 +281,10 @@
             font-size: 1.25rem;
         }
         
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+        
         .text-3xl {
             font-size: 1.875rem;
         }
@@ -280,6 +295,10 @@
         
         .font-semibold {
             font-weight: 600;
+        }
+        
+        .shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
         
         .shadow-lg {
@@ -325,41 +344,35 @@
             overflow: hidden;
         }
         
-        .transform {
-            transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1);
+        .transition {
+            transition: all 0.2s;
         }
         
-        .transition-all {
-            transition-property: all;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-        
-        .bg-cyan-500 {
+        .bg-cyan {
             background-color: #06b6d4;
         }
         
-        .bg-purple-500 {
+        .bg-purple {
             background-color: #8b5cf6;
         }
         
-        .bg-amber-500 {
+        .bg-amber {
             background-color: #f59e0b;
         }
         
-        .bg-red-500 {
+        .bg-red {
             background-color: #ef4444;
         }
         
-        .bg-green-500 {
+        .bg-green {
             background-color: #10b981;
         }
         
-        .bg-amber-500-20 {
+        .bg-amber-20 {
             background-color: rgba(245, 158, 11, 0.2);
         }
         
-        .bg-green-500-20 {
+        .bg-green-20 {
             background-color: rgba(16, 185, 129, 0.2);
         }
         
@@ -404,44 +417,111 @@
             color: white;
         }
         
-        @media (min-width: 768px) {
-            .md-grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+        .hidden {
+            display: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-xl {
+                font-size: 1.125rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .header-filters {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .financial-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .col-span-2 {
+                grid-column: 1;
             }
         }
         
-        @media (min-width: 1024px) {
-            .lg-grid-cols-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
             
-            .lg-grid-cols-5 {
-                grid-template-columns: repeat(5, minmax(0, 1fr));
+            .main-grid {
+                grid-template-columns: 2fr 1fr;
             }
             
-            .lg-col-span-2 {
-                grid-column: span 2 / span 2;
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .financial-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .kpi-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .main-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .financial-grid {
+                grid-template-columns: 1fr 2fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="min-h-screen bg-gray-900 text-gray-100 p-6">
+    <div class="container">
         <!-- Header -->
         <div class="mb-8">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-6 header-content">
                 <div>
                     <h1 class="text-3xl font-bold text-white mb-2">Fleet Operations Dashboard</h1>
-                    <p class="text-gray-400">Real-time fleet performance and analytics</p>
+                    <p class="text-light-3">Real-time fleet performance and analytics</p>
                 </div>
-                <div class="flex gap-3">
-                    <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" id="dateRange">
+                <div class="flex gap-3 header-filters">
+                    <select class="bg-dark-2 border border-gray rounded p-2 text-white" id="dateRange">
                         <option value="today">Today</option>
                         <option value="7days" selected>Last 7 Days</option>
                         <option value="30days">Last 30 Days</option>
                         <option value="90days">Last 90 Days</option>
                     </select>
-                    <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" id="filterDriver">
+                    <select class="bg-dark-2 border border-gray rounded p-2 text-white" id="filterDriver">
                         <option value="all" selected>All Drivers</option>
                         <option value="john">John Smith</option>
                         <option value="sarah">Sarah Johnson</option>
@@ -451,26 +531,26 @@
             </div>
 
             <!-- Alerts Bar -->
-            <div class="bg-gray-800 border-l-4 border-amber-500 rounded-lg p-4 mb-6">
+            <div class="bg-dark-2 border-left-4 border-amber rounded p-4 mb-6">
                 <div class="flex items-start gap-3">
-                    <i class="fas fa-exclamation-triangle text-amber-500 flex-shrink-0 mt-1"></i>
+                    <i class="fas fa-exclamation-triangle text-amber flex-shrink-0 mt-1"></i>
                     <div class="flex-1">
                         <h3 class="font-semibold text-white mb-2">Active Alerts (4)</h3>
                         <div class="space-y-2">
-                            <div class="text-sm text-gray-300 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            <div class="text-sm text-light-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber"></span>
                                 TRK-003 - Service due in 2 days
                             </div>
-                            <div class="text-sm text-gray-300 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            <div class="text-sm text-light-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red"></span>
                                 TRK-007 - Insurance expires tomorrow
                             </div>
-                            <div class="text-sm text-gray-300 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                            <div class="text-sm text-light-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-cyan-dark"></span>
                                 TRK-001 - Fuel efficiency below target
                             </div>
-                            <div class="text-sm text-gray-300 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            <div class="text-sm text-light-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber"></span>
                                 TRK-005 - Trip unprofitable (Route A-B)
                             </div>
                         </div>
@@ -480,103 +560,103 @@
         </div>
 
         <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md-grid-cols-2 lg-grid-cols-5 gap-4 mb-8">
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="grid kpi-grid gap-4 mb-8">
+            <div class="bg-dark-2 rounded p-6 border border-gray">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
                             <i class="fas fa-truck"></i>
                             <span>Active Trucks</span>
                         </div>
                         <div class="text-3xl font-bold text-white mb-1">
                             24
                         </div>
-                        <div class="text-sm text-green-400">
+                        <div class="text-sm text-green">
                             ↑ 8% vs last week
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-cyan-500"></div>
+                    <div class="w-2 h-16 rounded-full bg-cyan"></div>
                 </div>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="bg-dark-2 rounded p-6 border border-gray">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
                             <i class="fas fa-map-marker-alt"></i>
                             <span>Distance Covered</span>
                         </div>
                         <div class="text-3xl font-bold text-white mb-1">
-                            12,580<span class="text-xl text-gray-400 ml-1">km</span>
+                            12,580<span class="text-xl text-light-3 ml-1">km</span>
                         </div>
-                        <div class="text-sm text-green-400">
+                        <div class="text-sm text-green">
                             ↑ 12% vs last week
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-purple-500"></div>
+                    <div class="w-2 h-16 rounded-full bg-purple"></div>
                 </div>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="bg-dark-2 rounded p-6 border border-gray">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
                             <i class="fas fa-gas-pump"></i>
                             <span>Avg Fuel Cost</span>
                         </div>
                         <div class="text-3xl font-bold text-white mb-1">
-                            2.45<span class="text-xl text-gray-400 ml-1">$/km</span>
+                            2.45<span class="text-xl text-light-3 ml-1">$/km</span>
                         </div>
-                        <div class="text-sm text-red-500">
+                        <div class="text-sm text-red">
                             ↓ 3% vs last week
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-amber-500"></div>
+                    <div class="w-2 h-16 rounded-full bg-amber"></div>
                 </div>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="bg-dark-2 rounded p-6 border border-gray">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
                             <i class="fas fa-clock"></i>
                             <span>Downtime Hours</span>
                         </div>
                         <div class="text-3xl font-bold text-white mb-1">
-                            18<span class="text-xl text-gray-400 ml-1">hrs</span>
+                            18<span class="text-xl text-light-3 ml-1">hrs</span>
                         </div>
-                        <div class="text-sm text-red-500">
+                        <div class="text-sm text-red">
                             ↓ 15% vs last week
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-red-500"></div>
+                    <div class="w-2 h-16 rounded-full bg-red"></div>
                 </div>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="bg-dark-2 rounded p-6 border border-gray">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                        <div class="flex items-center gap-2 text-light-3 text-sm mb-2">
                             <i class="fas fa-dollar-sign"></i>
                             <span>Profit per KM</span>
                         </div>
                         <div class="text-3xl font-bold text-white mb-1">
-                            1.23<span class="text-xl text-gray-400 ml-1">$</span>
+                            1.23<span class="text-xl text-light-3 ml-1">$</span>
                         </div>
-                        <div class="text-sm text-green-400">
+                        <div class="text-sm text-green">
                             ↑ 5% vs last week
                         </div>
                     </div>
-                    <div class="w-2 h-16 rounded-full bg-green-500"></div>
+                    <div class="w-2 h-16 rounded-full bg-green"></div>
                 </div>
             </div>
         </div>
 
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg-grid-cols-3 gap-6 mb-6">
+        <div class="grid main-grid gap-6 mb-6">
             <!-- Map View -->
-            <div class="lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-cyan-500"></i>
+                    <i class="fas fa-map-marker-alt text-cyan-dark"></i>
                     Fleet Location Overview
                 </h2>
-                <div class="bg-gray-900 rounded-lg h-80 flex items-center justify-center border border-gray-700 relative overflow-hidden">
+                <div class="bg-dark-1 rounded h-80 flex items-center justify-center border border-gray relative overflow-hidden">
                     <!-- Simulated Map -->
                     <div class="absolute inset-0 opacity-20">
                         <svg viewBox="0 0 400 300" class="w-full h-full">
@@ -600,12 +680,12 @@
                     </div>
 
                     <!-- Selected Truck Info -->
-                    <div id="selectedTruckInfo" class="absolute bottom-4 left-4 right-4 bg-gray-800 border border-cyan-500 rounded-lg p-4 shadow-xl hidden">
+                    <div id="selectedTruckInfo" class="absolute bottom-4 left-4 right-4 bg-dark-2 border border-cyan rounded p-4 shadow-xl hidden">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-bold text-cyan-400" id="truckId">TRK-001</h3>
-                                <p class="text-sm text-gray-300" id="truckDriver">Driver: John Smith</p>
-                                <p class="text-sm text-gray-400" id="truckLocation">Location: Highway 401</p>
+                                <h3 class="font-bold text-cyan" id="truckId">TRK-001</h3>
+                                <p class="text-sm text-light-2" id="truckDriver">Driver: John Smith</p>
+                                <p class="text-sm text-light-3" id="truckLocation">Location: Highway 401</p>
                             </div>
                             <button class="close-btn" onclick="closeTruckInfo()">✕</button>
                         </div>
@@ -615,69 +695,69 @@
                 <!-- Truck Status Legend -->
                 <div class="mt-4 flex gap-6 text-sm">
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
-                        <span class="text-gray-300">Active (3)</span>
+                        <div class="w-3 h-3 rounded-full bg-cyan"></div>
+                        <span class="text-light-2">Active (3)</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                        <span class="text-gray-300">Idle (1)</span>
+                        <div class="w-3 h-3 rounded-full bg-amber"></div>
+                        <span class="text-light-2">Idle (1)</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span class="text-gray-300">Maintenance (1)</span>
+                        <div class="w-3 h-3 rounded-full bg-red"></div>
+                        <span class="text-light-2">Maintenance (1)</span>
                     </div>
                 </div>
             </div>
 
             <!-- Maintenance Schedule -->
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-cog text-purple-500"></i>
+                    <i class="fas fa-cog text-purple"></i>
                     Maintenance Schedule
                 </h2>
                 <div class="space-y-3">
-                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #10b981">
+                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #10b981">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-white">TRK-001</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-green-500-20 text-green-400">9 days</span>
+                            <span class="text-xs px-2 py-1 rounded bg-green-20 text-green-dark">9 days</span>
                         </div>
-                        <p class="text-sm text-gray-400">Oil Change</p>
-                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-05</p>
+                        <p class="text-sm text-light-3">Oil Change</p>
+                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-05</p>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #f59e0b">
+                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #f59e0b">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-white">TRK-003</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-amber-500-20 text-amber-400">2 days</span>
+                            <span class="text-xs px-2 py-1 rounded bg-amber-20 text-amber">2 days</span>
                         </div>
-                        <p class="text-sm text-gray-400">Brake Inspection</p>
-                        <p class="text-xs text-gray-500 mt-1">Due: 2025-10-29</p>
+                        <p class="text-sm text-light-3">Brake Inspection</p>
+                        <p class="text-xs text-light-4 mt-1">Due: 2025-10-29</p>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #f59e0b">
+                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #f59e0b">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-white">TRK-007</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-amber-500-20 text-amber-400">5 days</span>
+                            <span class="text-xs px-2 py-1 rounded bg-amber-20 text-amber">5 days</span>
                         </div>
-                        <p class="text-sm text-gray-400">Annual Service</p>
-                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-01</p>
+                        <p class="text-sm text-light-3">Annual Service</p>
+                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-01</p>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #10b981">
+                    <div class="bg-dark-1 rounded p-4 border-left-4" style="border-left-color: #10b981">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-white">TRK-002</h3>
-                            <span class="text-xs px-2 py-1 rounded bg-green-500-20 text-green-400">19 days</span>
+                            <span class="text-xs px-2 py-1 rounded bg-green-20 text-green-dark">19 days</span>
                         </div>
-                        <p class="text-sm text-gray-400">Tire Rotation</p>
-                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-15</p>
+                        <p class="text-sm text-light-3">Tire Rotation</p>
+                        <p class="text-xs text-light-4 mt-1">Due: 2025-11-15</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg-grid-cols-2 gap-6 mb-6">
+        <div class="grid charts-grid gap-6 mb-6">
             <!-- Fuel Efficiency Trend -->
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-line text-green-500"></i>
+                    <i class="fas fa-chart-line text-green-dark"></i>
                     Fuel Efficiency Trend
                 </h2>
                 <div class="h-64">
@@ -686,7 +766,7 @@
             </div>
 
             <!-- Trip Performance -->
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4">Trip Performance by Truck</h2>
                 <div class="h-64">
                     <canvas id="tripChart"></canvas>
@@ -695,9 +775,9 @@
         </div>
 
         <!-- Financial Analytics -->
-        <div class="grid grid-cols-1 lg-grid-cols-3 gap-6">
+        <div class="grid financial-grid gap-6">
             <!-- Cost Breakdown -->
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4">Cost Breakdown</h2>
                 <div class="h-64">
                     <canvas id="costChart"></canvas>
@@ -705,36 +785,36 @@
                 <div class="mt-4 space-y-2">
                     <div class="flex justify-between text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
-                            <span class="text-gray-300">Fuel</span>
+                            <div class="w-3 h-3 rounded-full bg-cyan"></div>
+                            <span class="text-light-2">Fuel</span>
                         </div>
                         <span class="text-white font-semibold">$45,200</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                            <span class="text-gray-300">Maintenance</span>
+                            <div class="w-3 h-3 rounded-full bg-purple"></div>
+                            <span class="text-light-2">Maintenance</span>
                         </div>
                         <span class="text-white font-semibold">$12,800</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                            <span class="text-gray-300">Tolls</span>
+                            <div class="w-3 h-3 rounded-full bg-amber"></div>
+                            <span class="text-light-2">Tolls</span>
                         </div>
                         <span class="text-white font-semibold">$5,400</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="text-gray-300">Driver Wages</span>
+                            <div class="w-3 h-3 rounded-full bg-green"></div>
+                            <span class="text-light-2">Driver Wages</span>
                         </div>
                         <span class="text-white font-semibold">$38,600</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span class="text-gray-300">Insurance</span>
+                            <div class="w-3 h-3 rounded-full bg-red"></div>
+                            <span class="text-light-2">Insurance</span>
                         </div>
                         <span class="text-white font-semibold">$8,900</span>
                     </div>
@@ -742,7 +822,7 @@
             </div>
 
             <!-- Profit Trend -->
-            <div class="lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6">
+            <div class="bg-dark-2 rounded border border-gray p-6">
                 <h2 class="text-xl font-bold text-white mb-4">Monthly Profit & Expense Trend</h2>
                 <div class="h-64">
                     <canvas id="profitChart"></canvas>
