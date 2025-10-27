@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fleet Operations Dashboard</title>
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.8/umd/Recharts.js"></script>
-    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -163,6 +160,10 @@
         
         .mt-4 {
             margin-top: 1rem;
+        }
+        
+        .ml-1 {
+            margin-left: 0.25rem;
         }
         
         .mr-1 {
@@ -328,18 +329,6 @@
             transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1);
         }
         
-        .hover-scale-110:hover {
-            transform: scale(1.1);
-        }
-        
-        .hover-bg-cyan-400:hover {
-            background-color: #22d3ee;
-        }
-        
-        .hover-text-white:hover {
-            color: #ffffff;
-        }
-        
         .transition-all {
             transition-property: all;
             transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -380,11 +369,39 @@
             background-repeat: no-repeat;
             background-position: right 0.7rem top 50%;
             background-size: 0.65rem auto;
+            padding-right: 2.5rem;
         }
         
         select:focus {
             outline: none;
             box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.5);
+        }
+        
+        .btn {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #22d3ee;
+            transform: scale(1.1);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+        
+        .close-btn:hover {
+            color: white;
         }
         
         @media (min-width: 768px) {
@@ -409,361 +426,520 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="min-h-screen bg-gray-900 text-gray-100 p-6">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Fleet Operations Dashboard</h1>
+                    <p class="text-gray-400">Real-time fleet performance and analytics</p>
+                </div>
+                <div class="flex gap-3">
+                    <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" id="dateRange">
+                        <option value="today">Today</option>
+                        <option value="7days" selected>Last 7 Days</option>
+                        <option value="30days">Last 30 Days</option>
+                        <option value="90days">Last 90 Days</option>
+                    </select>
+                    <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" id="filterDriver">
+                        <option value="all" selected>All Drivers</option>
+                        <option value="john">John Smith</option>
+                        <option value="sarah">Sarah Johnson</option>
+                        <option value="mike">Mike Davis</option>
+                    </select>
+                </div>
+            </div>
 
-    <script type="text/babel">
-        const { useState } = React;
-        
-        // Sample data
-        const kpiData = {
-            activeTrucks: 24,
-            totalDistance: 12580,
-            avgFuelCost: 2.45,
-            downtimeHours: 18,
-            profitPerKm: 1.23
+            <!-- Alerts Bar -->
+            <div class="bg-gray-800 border-l-4 border-amber-500 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-amber-500 flex-shrink-0 mt-1"></i>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-white mb-2">Active Alerts (4)</h3>
+                        <div class="space-y-2">
+                            <div class="text-sm text-gray-300 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                TRK-003 - Service due in 2 days
+                            </div>
+                            <div class="text-sm text-gray-300 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                TRK-007 - Insurance expires tomorrow
+                            </div>
+                            <div class="text-sm text-gray-300 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                                TRK-001 - Fuel efficiency below target
+                            </div>
+                            <div class="text-sm text-gray-300 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                TRK-005 - Trip unprofitable (Route A-B)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md-grid-cols-2 lg-grid-cols-5 gap-4 mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                            <i class="fas fa-truck"></i>
+                            <span>Active Trucks</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1">
+                            24
+                        </div>
+                        <div class="text-sm text-green-400">
+                            ↑ 8% vs last week
+                        </div>
+                    </div>
+                    <div class="w-2 h-16 rounded-full bg-cyan-500"></div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Distance Covered</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1">
+                            12,580<span class="text-xl text-gray-400 ml-1">km</span>
+                        </div>
+                        <div class="text-sm text-green-400">
+                            ↑ 12% vs last week
+                        </div>
+                    </div>
+                    <div class="w-2 h-16 rounded-full bg-purple-500"></div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                            <i class="fas fa-gas-pump"></i>
+                            <span>Avg Fuel Cost</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1">
+                            2.45<span class="text-xl text-gray-400 ml-1">$/km</span>
+                        </div>
+                        <div class="text-sm text-red-500">
+                            ↓ 3% vs last week
+                        </div>
+                    </div>
+                    <div class="w-2 h-16 rounded-full bg-amber-500"></div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                            <i class="fas fa-clock"></i>
+                            <span>Downtime Hours</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1">
+                            18<span class="text-xl text-gray-400 ml-1">hrs</span>
+                        </div>
+                        <div class="text-sm text-red-500">
+                            ↓ 15% vs last week
+                        </div>
+                    </div>
+                    <div class="w-2 h-16 rounded-full bg-red-500"></div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Profit per KM</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1">
+                            1.23<span class="text-xl text-gray-400 ml-1">$</span>
+                        </div>
+                        <div class="text-sm text-green-400">
+                            ↑ 5% vs last week
+                        </div>
+                    </div>
+                    <div class="w-2 h-16 rounded-full bg-green-500"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg-grid-cols-3 gap-6 mb-6">
+            <!-- Map View -->
+            <div class="lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-cyan-500"></i>
+                    Fleet Location Overview
+                </h2>
+                <div class="bg-gray-900 rounded-lg h-80 flex items-center justify-center border border-gray-700 relative overflow-hidden">
+                    <!-- Simulated Map -->
+                    <div class="absolute inset-0 opacity-20">
+                        <svg viewBox="0 0 400 300" class="w-full h-full">
+                            <path d="M 50 150 Q 100 100, 150 150 T 250 150 T 350 150" stroke="#4ade80" stroke-width="3" fill="none" opacity="0.5"/>
+                            <path d="M 50 200 L 350 200" stroke="#06b6d4" stroke-width="3" opacity="0.5"/>
+                            <path d="M 200 50 L 200 250" stroke="#f59e0b" stroke-width="3" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Truck Markers -->
+                    <div class="absolute inset-0 p-8">
+                        <button class="btn absolute" style="left: 20%; top: 30%;" onclick="selectTruck('TRK-001')">
+                            <i class="fas fa-truck"></i>
+                        </button>
+                        <button class="btn absolute" style="left: 38%; top: 42%;" onclick="selectTruck('TRK-002')">
+                            <i class="fas fa-truck"></i>
+                        </button>
+                        <button class="btn absolute" style="left: 56%; top: 54%;" onclick="selectTruck('TRK-004')">
+                            <i class="fas fa-truck"></i>
+                        </button>
+                    </div>
+
+                    <!-- Selected Truck Info -->
+                    <div id="selectedTruckInfo" class="absolute bottom-4 left-4 right-4 bg-gray-800 border border-cyan-500 rounded-lg p-4 shadow-xl hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-cyan-400" id="truckId">TRK-001</h3>
+                                <p class="text-sm text-gray-300" id="truckDriver">Driver: John Smith</p>
+                                <p class="text-sm text-gray-400" id="truckLocation">Location: Highway 401</p>
+                            </div>
+                            <button class="close-btn" onclick="closeTruckInfo()">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Truck Status Legend -->
+                <div class="mt-4 flex gap-6 text-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
+                        <span class="text-gray-300">Active (3)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <span class="text-gray-300">Idle (1)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-gray-300">Maintenance (1)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Schedule -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-cog text-purple-500"></i>
+                    Maintenance Schedule
+                </h2>
+                <div class="space-y-3">
+                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #10b981">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-white">TRK-001</h3>
+                            <span class="text-xs px-2 py-1 rounded bg-green-500-20 text-green-400">9 days</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Oil Change</p>
+                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-05</p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #f59e0b">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-white">TRK-003</h3>
+                            <span class="text-xs px-2 py-1 rounded bg-amber-500-20 text-amber-400">2 days</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Brake Inspection</p>
+                        <p class="text-xs text-gray-500 mt-1">Due: 2025-10-29</p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #f59e0b">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-white">TRK-007</h3>
+                            <span class="text-xs px-2 py-1 rounded bg-amber-500-20 text-amber-400">5 days</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Annual Service</p>
+                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-01</p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border-l-4" style="border-left-color: #10b981">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-white">TRK-002</h3>
+                            <span class="text-xs px-2 py-1 rounded bg-green-500-20 text-green-400">19 days</span>
+                        </div>
+                        <p class="text-sm text-gray-400">Tire Rotation</p>
+                        <p class="text-xs text-gray-500 mt-1">Due: 2025-11-15</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg-grid-cols-2 gap-6 mb-6">
+            <!-- Fuel Efficiency Trend -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-line text-green-500"></i>
+                    Fuel Efficiency Trend
+                </h2>
+                <div class="h-64">
+                    <canvas id="fuelChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Trip Performance -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Trip Performance by Truck</h2>
+                <div class="h-64">
+                    <canvas id="tripChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Analytics -->
+        <div class="grid grid-cols-1 lg-grid-cols-3 gap-6">
+            <!-- Cost Breakdown -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Cost Breakdown</h2>
+                <div class="h-64">
+                    <canvas id="costChart"></canvas>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
+                            <span class="text-gray-300">Fuel</span>
+                        </div>
+                        <span class="text-white font-semibold">$45,200</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                            <span class="text-gray-300">Maintenance</span>
+                        </div>
+                        <span class="text-white font-semibold">$12,800</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                            <span class="text-gray-300">Tolls</span>
+                        </div>
+                        <span class="text-white font-semibold">$5,400</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-gray-300">Driver Wages</span>
+                        </div>
+                        <span class="text-white font-semibold">$38,600</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-gray-300">Insurance</span>
+                        </div>
+                        <span class="text-white font-semibold">$8,900</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profit Trend -->
+            <div class="lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Monthly Profit & Expense Trend</h2>
+                <div class="h-64">
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Truck selection functionality
+        const trucks = {
+            'TRK-001': { driver: 'John Smith', location: 'Highway 401' },
+            'TRK-002': { driver: 'Sarah Johnson', location: 'Highway 10' },
+            'TRK-004': { driver: 'Mike Davis', location: 'Highway 427' }
         };
 
-        const trucks = [
-            { id: 'TRK-001', status: 'active', driver: 'John Smith', location: 'Highway 401', lat: 43.65, lng: -79.38 },
-            { id: 'TRK-002', status: 'active', driver: 'Sarah Johnson', location: 'Highway 10', lat: 43.70, lng: -79.42 },
-            { id: 'TRK-003', status: 'maintenance', driver: '-', location: 'Depot', lat: 43.62, lng: -79.35 },
-            { id: 'TRK-004', status: 'active', driver: 'Mike Davis', location: 'Highway 427', lat: 43.68, lng: -79.60 },
-            { id: 'TRK-005', status: 'idle', driver: '-', location: 'Rest Area', lat: 43.55, lng: -79.50 }
-        ];
-
-        const alerts = [
-            { type: 'warning', message: 'TRK-003 - Service due in 2 days', priority: 'high' },
-            { type: 'danger', message: 'TRK-007 - Insurance expires tomorrow', priority: 'critical' },
-            { type: 'info', message: 'TRK-001 - Fuel efficiency below target', priority: 'medium' },
-            { type: 'warning', message: 'TRK-005 - Trip unprofitable (Route A-B)', priority: 'high' }
-        ];
-
-        const fuelEfficiencyData = [
-            { day: 'Mon', efficiency: 6.8, target: 7.0 },
-            { day: 'Tue', efficiency: 7.2, target: 7.0 },
-            { day: 'Wed', efficiency: 6.5, target: 7.0 },
-            { day: 'Thu', efficiency: 7.4, target: 7.0 },
-            { day: 'Fri', efficiency: 7.1, target: 7.0 },
-            { day: 'Sat', efficiency: 6.9, target: 7.0 },
-            { day: 'Sun', efficiency: 7.3, target: 7.0 }
-        ];
-
-        const tripPerformanceData = [
-            { truck: 'TRK-001', trips: 12, distance: 2400 },
-            { truck: 'TRK-002', trips: 15, distance: 2850 },
-            { truck: 'TRK-003', trips: 3, distance: 450 },
-            { truck: 'TRK-004', trips: 11, distance: 2200 },
-            { truck: 'TRK-005', trips: 8, distance: 1680 }
-        ];
-
-        const costBreakdownData = [
-            { name: 'Fuel', value: 45200, color: '#06b6d4' },
-            { name: 'Maintenance', value: 12800, color: '#8b5cf6' },
-            { name: 'Tolls', value: 5400, color: '#f59e0b' },
-            { name: 'Driver Wages', value: 38600, color: '#10b981' },
-            { name: 'Insurance', value: 8900, color: '#ef4444' }
-        ];
-
-        const profitTrendData = [
-            { month: 'Apr', revenue: 145000, expenses: 98000, profit: 47000 },
-            { month: 'May', revenue: 158000, expenses: 102000, profit: 56000 },
-            { month: 'Jun', revenue: 162000, expenses: 105000, profit: 57000 },
-            { month: 'Jul', revenue: 171000, expenses: 108000, profit: 63000 },
-            { month: 'Aug', revenue: 168000, expenses: 110000, profit: 58000 },
-            { month: 'Sep', revenue: 175000, expenses: 112000, profit: 63000 }
-        ];
-
-        const maintenanceSchedule = [
-            { truck: 'TRK-001', service: 'Oil Change', dueDate: '2025-11-05', daysLeft: 9, status: 'ok' },
-            { truck: 'TRK-003', service: 'Brake Inspection', dueDate: '2025-10-29', daysLeft: 2, status: 'warning' },
-            { truck: 'TRK-007', service: 'Annual Service', dueDate: '2025-11-01', daysLeft: 5, status: 'warning' },
-            { truck: 'TRK-002', service: 'Tire Rotation', dueDate: '2025-11-15', daysLeft: 19, status: 'ok' }
-        ];
-
-        function TruckingDashboard() {
-            const [selectedTruck, setSelectedTruck] = React.useState(null);
-            const [dateRange, setDateRange] = React.useState('7days');
-            const [filterDriver, setFilterDriver] = React.useState('all');
-
-            const KPICard = ({ icon: Icon, title, value, unit, trend, color }) => (
-                React.createElement('div', { className: 'bg-gray-800 rounded-lg p-6 border border-gray-700' },
-                    React.createElement('div', { className: 'flex items-start justify-between' },
-                        React.createElement('div', { className: 'flex-1' },
-                            React.createElement('div', { className: 'flex items-center gap-2 text-gray-400 text-sm mb-2' },
-                                React.createElement(Icon, { size: 16 }),
-                                React.createElement('span', null, title)
-                            ),
-                            React.createElement('div', { className: 'text-3xl font-bold text-white mb-1' },
-                                value,
-                                unit && React.createElement('span', { className: 'text-xl text-gray-400 ml-1' }, unit)
-                            ),
-                            trend && React.createElement('div', { 
-                                className: `text-sm ${trend > 0 ? 'text-green-400' : 'text-red-400'}` 
-                            }, 
-                                trend > 0 ? '↑' : '↓', ' ', Math.abs(trend), '% vs last week'
-                            )
-                        ),
-                        React.createElement('div', { className: `w-2 h-16 rounded-full ${color}` })
-                    )
-                )
-            );
-
-            return React.createElement('div', { className: 'min-h-screen bg-gray-900 text-gray-100 p-6' },
-                // Header
-                React.createElement('div', { className: 'mb-8' },
-                    React.createElement('div', { className: 'flex items-center justify-between mb-6' },
-                        React.createElement('div', null,
-                            React.createElement('h1', { className: 'text-3xl font-bold text-white mb-2' }, 'Fleet Operations Dashboard'),
-                            React.createElement('p', { className: 'text-gray-400' }, 'Real-time fleet performance and analytics')
-                        ),
-                        React.createElement('div', { className: 'flex gap-3' },
-                            React.createElement('select', {
-                                className: 'bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white',
-                                value: dateRange,
-                                onChange: (e) => setDateRange(e.target.value)
-                            },
-                                React.createElement('option', { value: 'today' }, 'Today'),
-                                React.createElement('option', { value: '7days' }, 'Last 7 Days'),
-                                React.createElement('option', { value: '30days' }, 'Last 30 Days'),
-                                React.createElement('option', { value: '90days' }, 'Last 90 Days')
-                            ),
-                            React.createElement('select', {
-                                className: 'bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white',
-                                value: filterDriver,
-                                onChange: (e) => setFilterDriver(e.target.value)
-                            },
-                                React.createElement('option', { value: 'all' }, 'All Drivers'),
-                                React.createElement('option', { value: 'john' }, 'John Smith'),
-                                React.createElement('option', { value: 'sarah' }, 'Sarah Johnson'),
-                                React.createElement('option', { value: 'mike' }, 'Mike Davis')
-                            )
-                        )
-                    ),
-                    // Alerts Bar
-                    React.createElement('div', { className: 'bg-gray-800 border-l-4 border-amber-500 rounded-lg p-4 mb-6' },
-                        React.createElement('div', { className: 'flex items-start gap-3' },
-                            React.createElement(lucideReact.AlertTriangle, { className: 'text-amber-500 flex-shrink-0 mt-1', size: 20 }),
-                            React.createElement('div', { className: 'flex-1' },
-                                React.createElement('h3', { className: 'font-semibold text-white mb-2' }, `Active Alerts (${alerts.length})`),
-                                React.createElement('div', { className: 'space-y-2' },
-                                    alerts.map((alert, idx) =>
-                                        React.createElement('div', { key: idx, className: 'text-sm text-gray-300 flex items-center gap-2' },
-                                            React.createElement('span', { 
-                                                className: `w-2 h-2 rounded-full ${
-                                                    alert.priority === 'critical' ? 'bg-red-500' : 
-                                                    alert.priority === 'high' ? 'bg-amber-500' : 'bg-cyan-500'
-                                                }`
-                                            }),
-                                            alert.message
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ),
-                // KPI Cards
-                React.createElement('div', { className: 'grid grid-cols-1 md-grid-cols-2 lg-grid-cols-5 gap-4 mb-8' },
-                    React.createElement(KPICard, {
-                        icon: lucideReact.Truck,
-                        title: 'Active Trucks',
-                        value: kpiData.activeTrucks,
-                        trend: 8,
-                        color: 'bg-cyan-500'
-                    }),
-                    React.createElement(KPICard, {
-                        icon: lucideReact.MapPin,
-                        title: 'Distance Covered',
-                        value: kpiData.totalDistance.toLocaleString(),
-                        unit: 'km',
-                        trend: 12,
-                        color: 'bg-purple-500'
-                    }),
-                    React.createElement(KPICard, {
-                        icon: lucideReact.Fuel,
-                        title: 'Avg Fuel Cost',
-                        value: kpiData.avgFuelCost,
-                        unit: '$/km',
-                        trend: -3,
-                        color: 'bg-amber-500'
-                    }),
-                    React.createElement(KPICard, {
-                        icon: lucideReact.Clock,
-                        title: 'Downtime Hours',
-                        value: kpiData.downtimeHours,
-                        unit: 'hrs',
-                        trend: -15,
-                        color: 'bg-red-500'
-                    }),
-                    React.createElement(KPICard, {
-                        icon: lucideReact.DollarSign,
-                        title: 'Profit per KM',
-                        value: kpiData.profitPerKm,
-                        unit: '$',
-                        trend: 5,
-                        color: 'bg-green-500'
-                    })
-                ),
-                // Main Content Grid
-                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-3 gap-6 mb-6' },
-                    // Map View
-                    React.createElement('div', { className: 'lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(lucideReact.MapPin, { size: 20, className: 'text-cyan-500' }),
-                            'Fleet Location Overview'
-                        ),
-                        React.createElement('div', { className: 'bg-gray-900 rounded-lg h-80 flex items-center justify-center border border-gray-700 relative overflow-hidden' },
-                            // Simulated Map
-                            React.createElement('div', { className: 'absolute inset-0 opacity-20' },
-                                React.createElement('svg', { viewBox: '0 0 400 300', className: 'w-full h-full' },
-                                    React.createElement('path', { 
-                                        d: 'M 50 150 Q 100 100, 150 150 T 250 150 T 350 150', 
-                                        stroke: '#4ade80', 
-                                        strokeWidth: '3', 
-                                        fill: 'none', 
-                                        opacity: '0.5' 
-                                    }),
-                                    React.createElement('path', { 
-                                        d: 'M 50 200 L 350 200', 
-                                        stroke: '#06b6d4', 
-                                        strokeWidth: '3', 
-                                        opacity: '0.5' 
-                                    }),
-                                    React.createElement('path', { 
-                                        d: 'M 200 50 L 200 250', 
-                                        stroke: '#f59e0b', 
-                                        strokeWidth: '3', 
-                                        opacity: '0.5' 
-                                    })
-                                )
-                            ),
-                            // Truck Markers
-                            React.createElement('div', { className: 'absolute inset-0 p-8' },
-                                trucks.filter(t => t.status === 'active').map((truck, idx) =>
-                                    React.createElement('button', {
-                                        key: truck.id,
-                                        onClick: () => setSelectedTruck(truck),
-                                        className: 'absolute bg-cyan-500 hover-bg-cyan-400 text-white rounded-full p-2 transition-all transform hover-scale-110 shadow-lg',
-                                        style: { 
-                                            left: `${20 + idx * 18}%`, 
-                                            top: `${30 + idx * 12}%` 
-                                        }
-                                    },
-                                        React.createElement(lucideReact.Truck, { size: 16 })
-                                    )
-                                )
-                            ),
-                            // Selected Truck Info
-                            selectedTruck && React.createElement('div', { className: 'absolute bottom-4 left-4 right-4 bg-gray-800 border border-cyan-500 rounded-lg p-4 shadow-xl' },
-                                React.createElement('div', { className: 'flex justify-between items-start' },
-                                    React.createElement('div', null,
-                                        React.createElement('h3', { className: 'font-bold text-cyan-400' }, selectedTruck.id),
-                                        React.createElement('p', { className: 'text-sm text-gray-300' }, `Driver: ${selectedTruck.driver}`),
-                                        React.createElement('p', { className: 'text-sm text-gray-400' }, `Location: ${selectedTruck.location}`)
-                                    ),
-                                    React.createElement('button', {
-                                        onClick: () => setSelectedTruck(null),
-                                        className: 'text-gray-400 hover-text-white'
-                                    }, '✕')
-                                )
-                            )
-                        ),
-                        // Truck Status Legend
-                        React.createElement('div', { className: 'mt-4 flex gap-6 text-sm' },
-                            React.createElement('div', { className: 'flex items-center gap-2' },
-                                React.createElement('div', { className: 'w-3 h-3 rounded-full bg-cyan-500' }),
-                                React.createElement('span', { className: 'text-gray-300' }, `Active (${trucks.filter(t => t.status === 'active').length})`)
-                            ),
-                            React.createElement('div', { className: 'flex items-center gap-2' },
-                                React.createElement('div', { className: 'w-3 h-3 rounded-full bg-amber-500' }),
-                                React.createElement('span', { className: 'text-gray-300' }, `Idle (${trucks.filter(t => t.status === 'idle').length})`)
-                            ),
-                            React.createElement('div', { className: 'flex items-center gap-2' },
-                                React.createElement('div', { className: 'w-3 h-3 rounded-full bg-red-500' }),
-                                React.createElement('span', { className: 'text-gray-300' }, `Maintenance (${trucks.filter(t => t.status === 'maintenance').length})`)
-                            )
-                        )
-                    ),
-                    // Maintenance Schedule
-                    React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(lucideReact.Settings, { size: 20, className: 'text-purple-500' }),
-                            'Maintenance Schedule'
-                        ),
-                        React.createElement('div', { className: 'space-y-3' },
-                            maintenanceSchedule.map((item, idx) =>
-                                React.createElement('div', {
-                                    key: idx,
-                                    className: 'bg-gray-900 rounded-lg p-4 border-l-4',
-                                    style: { borderLeftColor: item.status === 'warning' ? '#f59e0b' : '#10b981' }
-                                },
-                                    React.createElement('div', { className: 'flex justify-between items-start mb-2' },
-                                        React.createElement('h3', { className: 'font-semibold text-white' }, item.truck),
-                                        React.createElement('span', { 
-                                            className: `text-xs px-2 py-1 rounded ${
-                                                item.status === 'warning' ? 'bg-amber-500-20 text-amber-400' : 'bg-green-500-20 text-green-400'
-                                            }`
-                                        }, `${item.daysLeft} days`)
-                                    ),
-                                    React.createElement('p', { className: 'text-sm text-gray-400' }, item.service),
-                                    React.createElement('p', { className: 'text-xs text-gray-500 mt-1' }, `Due: ${item.dueDate}`)
-                                )
-                            )
-                        )
-                    )
-                ),
-                // Charts Row - Using simple divs instead of Recharts
-                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-2 gap-6 mb-6' },
-                    // Fuel Efficiency Trend
-                    React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(lucideReact.TrendingUp, { size: 20, className: 'text-green-500' }),
-                            'Fuel Efficiency Trend'
-                        ),
-                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
-                            'Chart visualization would appear here with Recharts'
-                        )
-                    ),
-                    // Trip Performance
-                    React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Trip Performance by Truck'),
-                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
-                            'Chart visualization would appear here with Recharts'
-                        )
-                    )
-                ),
-                // Financial Analytics
-                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-3 gap-6' },
-                    // Cost Breakdown
-                    React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Cost Breakdown'),
-                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
-                            'Pie chart visualization would appear here with Recharts'
-                        ),
-                        React.createElement('div', { className: 'mt-4 space-y-2' },
-                            costBreakdownData.map((item, idx) =>
-                                React.createElement('div', { key: idx, className: 'flex justify-between text-sm' },
-                                    React.createElement('div', { className: 'flex items-center gap-2' },
-                                        React.createElement('div', { className: 'w-3 h-3 rounded-full', style: { backgroundColor: item.color } }),
-                                        React.createElement('span', { className: 'text-gray-300' }, item.name)
-                                    ),
-                                    React.createElement('span', { className: 'text-white font-semibold' }, `$${item.value.toLocaleString()}`)
-                                )
-                            )
-                        )
-                    ),
-                    // Profit Trend
-                    React.createElement('div', { className: 'lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
-                        React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Monthly Profit & Expense Trend'),
-                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
-                            'Bar chart visualization would appear here with Recharts'
-                        )
-                    )
-                )
-            );
+        function selectTruck(truckId) {
+            const info = document.getElementById('selectedTruckInfo');
+            const truckIdElement = document.getElementById('truckId');
+            const truckDriver = document.getElementById('truckDriver');
+            const truckLocation = document.getElementById('truckLocation');
+            
+            truckIdElement.textContent = truckId;
+            truckDriver.textContent = `Driver: ${trucks[truckId].driver}`;
+            truckLocation.textContent = `Location: ${trucks[truckId].location}`;
+            
+            info.classList.remove('hidden');
         }
 
-        ReactDOM.render(React.createElement(TruckingDashboard), document.getElementById('root'));
+        function closeTruckInfo() {
+            document.getElementById('selectedTruckInfo').classList.add('hidden');
+        }
+
+        // Initialize charts when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fuel Efficiency Chart
+            const fuelCtx = document.getElementById('fuelChart').getContext('2d');
+            new Chart(fuelCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Km/L',
+                            data: [6.8, 7.2, 6.5, 7.4, 7.1, 6.9, 7.3],
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Target',
+                            data: [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+                            borderColor: '#f59e0b',
+                            borderDash: [5, 5],
+                            backgroundColor: 'transparent',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9ca3af' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        y: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+
+            // Trip Performance Chart
+            const tripCtx = document.getElementById('tripChart').getContext('2d');
+            new Chart(tripCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['TRK-001', 'TRK-002', 'TRK-003', 'TRK-004', 'TRK-005'],
+                    datasets: [
+                        {
+                            label: 'Trips',
+                            data: [12, 15, 3, 11, 8],
+                            backgroundColor: '#8b5cf6'
+                        },
+                        {
+                            label: 'Distance (km)',
+                            data: [2400, 2850, 450, 2200, 1680],
+                            backgroundColor: '#06b6d4'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9ca3af' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        y: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+
+            // Cost Breakdown Chart
+            const costCtx = document.getElementById('costChart').getContext('2d');
+            new Chart(costCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fuel', 'Maintenance', 'Tolls', 'Driver Wages', 'Insurance'],
+                    datasets: [{
+                        data: [45200, 12800, 5400, 38600, 8900],
+                        backgroundColor: [
+                            '#06b6d4',
+                            '#8b5cf6',
+                            '#f59e0b',
+                            '#10b981',
+                            '#ef4444'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Profit Trend Chart
+            const profitCtx = document.getElementById('profitChart').getContext('2d');
+            new Chart(profitCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    datasets: [
+                        {
+                            label: 'Revenue',
+                            data: [145000, 158000, 162000, 171000, 168000, 175000],
+                            backgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Expenses',
+                            data: [98000, 102000, 105000, 108000, 110000, 112000],
+                            backgroundColor: '#ef4444'
+                        },
+                        {
+                            label: 'Profit',
+                            data: [47000, 56000, 57000, 63000, 58000, 63000],
+                            backgroundColor: '#06b6d4'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9ca3af' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        y: {
+                            grid: { color: '#374151' },
+                            ticks: { 
+                                color: '#9ca3af',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
