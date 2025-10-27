@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fleet Operations Dashboard</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://unpkg.com/recharts@2.8/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.js"></script>
     <style>
         * {
             margin: 0;
@@ -328,15 +328,15 @@
             transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1);
         }
         
-        .hover\\:scale-110:hover {
+        .hover-scale-110:hover {
             transform: scale(1.1);
         }
         
-        .hover\\:bg-cyan-400:hover {
+        .hover-bg-cyan-400:hover {
             background-color: #22d3ee;
         }
         
-        .hover\\:text-white:hover {
+        .hover-text-white:hover {
             color: #ffffff;
         }
         
@@ -366,11 +366,11 @@
             background-color: #10b981;
         }
         
-        .bg-amber-500\\/20 {
+        .bg-amber-500-20 {
             background-color: rgba(245, 158, 11, 0.2);
         }
         
-        .bg-green-500\\/20 {
+        .bg-green-500-20 {
             background-color: rgba(16, 185, 129, 0.2);
         }
         
@@ -388,21 +388,21 @@
         }
         
         @media (min-width: 768px) {
-            .md\\:grid-cols-2 {
+            .md-grid-cols-2 {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
         
         @media (min-width: 1024px) {
-            .lg\\:grid-cols-3 {
+            .lg-grid-cols-3 {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
             
-            .lg\\:grid-cols-5 {
+            .lg-grid-cols-5 {
                 grid-template-columns: repeat(5, minmax(0, 1fr));
             }
             
-            .lg\\:col-span-2 {
+            .lg-col-span-2 {
                 grid-column: span 2 / span 2;
             }
         }
@@ -413,104 +413,77 @@
 
     <script type="text/babel">
         const { useState } = React;
-        const { 
-            Truck, 
-            AlertTriangle, 
-            DollarSign, 
-            Clock, 
-            Fuel, 
-            MapPin, 
-            Calendar, 
-            TrendingUp, 
-            Settings 
-        } = lucideReact;
         
-        const {
-            LineChart,
-            Line,
-            BarChart,
-            Bar,
-            XAxis,
-            YAxis,
-            CartesianGrid,
-            Tooltip,
-            Legend,
-            ResponsiveContainer,
-            PieChart,
-            Pie,
-            Cell
-        } = Recharts;
+        // Sample data
+        const kpiData = {
+            activeTrucks: 24,
+            totalDistance: 12580,
+            avgFuelCost: 2.45,
+            downtimeHours: 18,
+            profitPerKm: 1.23
+        };
 
-        const TruckingDashboard = () => {
-            const [selectedTruck, setSelectedTruck] = useState(null);
-            const [dateRange, setDateRange] = useState('7days');
-            const [filterDriver, setFilterDriver] = useState('all');
+        const trucks = [
+            { id: 'TRK-001', status: 'active', driver: 'John Smith', location: 'Highway 401', lat: 43.65, lng: -79.38 },
+            { id: 'TRK-002', status: 'active', driver: 'Sarah Johnson', location: 'Highway 10', lat: 43.70, lng: -79.42 },
+            { id: 'TRK-003', status: 'maintenance', driver: '-', location: 'Depot', lat: 43.62, lng: -79.35 },
+            { id: 'TRK-004', status: 'active', driver: 'Mike Davis', location: 'Highway 427', lat: 43.68, lng: -79.60 },
+            { id: 'TRK-005', status: 'idle', driver: '-', location: 'Rest Area', lat: 43.55, lng: -79.50 }
+        ];
 
-            // Sample data
-            const kpiData = {
-                activeTrucks: 24,
-                totalDistance: 12580,
-                avgFuelCost: 2.45,
-                downtimeHours: 18,
-                profitPerKm: 1.23
-            };
+        const alerts = [
+            { type: 'warning', message: 'TRK-003 - Service due in 2 days', priority: 'high' },
+            { type: 'danger', message: 'TRK-007 - Insurance expires tomorrow', priority: 'critical' },
+            { type: 'info', message: 'TRK-001 - Fuel efficiency below target', priority: 'medium' },
+            { type: 'warning', message: 'TRK-005 - Trip unprofitable (Route A-B)', priority: 'high' }
+        ];
 
-            const trucks = [
-                { id: 'TRK-001', status: 'active', driver: 'John Smith', location: 'Highway 401', lat: 43.65, lng: -79.38 },
-                { id: 'TRK-002', status: 'active', driver: 'Sarah Johnson', location: 'Highway 10', lat: 43.70, lng: -79.42 },
-                { id: 'TRK-003', status: 'maintenance', driver: '-', location: 'Depot', lat: 43.62, lng: -79.35 },
-                { id: 'TRK-004', status: 'active', driver: 'Mike Davis', location: 'Highway 427', lat: 43.68, lng: -79.60 },
-                { id: 'TRK-005', status: 'idle', driver: '-', location: 'Rest Area', lat: 43.55, lng: -79.50 }
-            ];
+        const fuelEfficiencyData = [
+            { day: 'Mon', efficiency: 6.8, target: 7.0 },
+            { day: 'Tue', efficiency: 7.2, target: 7.0 },
+            { day: 'Wed', efficiency: 6.5, target: 7.0 },
+            { day: 'Thu', efficiency: 7.4, target: 7.0 },
+            { day: 'Fri', efficiency: 7.1, target: 7.0 },
+            { day: 'Sat', efficiency: 6.9, target: 7.0 },
+            { day: 'Sun', efficiency: 7.3, target: 7.0 }
+        ];
 
-            const alerts = [
-                { type: 'warning', message: 'TRK-003 - Service due in 2 days', priority: 'high' },
-                { type: 'danger', message: 'TRK-007 - Insurance expires tomorrow', priority: 'critical' },
-                { type: 'info', message: 'TRK-001 - Fuel efficiency below target', priority: 'medium' },
-                { type: 'warning', message: 'TRK-005 - Trip unprofitable (Route A-B)', priority: 'high' }
-            ];
+        const tripPerformanceData = [
+            { truck: 'TRK-001', trips: 12, distance: 2400 },
+            { truck: 'TRK-002', trips: 15, distance: 2850 },
+            { truck: 'TRK-003', trips: 3, distance: 450 },
+            { truck: 'TRK-004', trips: 11, distance: 2200 },
+            { truck: 'TRK-005', trips: 8, distance: 1680 }
+        ];
 
-            const fuelEfficiencyData = [
-                { day: 'Mon', efficiency: 6.8, target: 7.0 },
-                { day: 'Tue', efficiency: 7.2, target: 7.0 },
-                { day: 'Wed', efficiency: 6.5, target: 7.0 },
-                { day: 'Thu', efficiency: 7.4, target: 7.0 },
-                { day: 'Fri', efficiency: 7.1, target: 7.0 },
-                { day: 'Sat', efficiency: 6.9, target: 7.0 },
-                { day: 'Sun', efficiency: 7.3, target: 7.0 }
-            ];
+        const costBreakdownData = [
+            { name: 'Fuel', value: 45200, color: '#06b6d4' },
+            { name: 'Maintenance', value: 12800, color: '#8b5cf6' },
+            { name: 'Tolls', value: 5400, color: '#f59e0b' },
+            { name: 'Driver Wages', value: 38600, color: '#10b981' },
+            { name: 'Insurance', value: 8900, color: '#ef4444' }
+        ];
 
-            const tripPerformanceData = [
-                { truck: 'TRK-001', trips: 12, distance: 2400 },
-                { truck: 'TRK-002', trips: 15, distance: 2850 },
-                { truck: 'TRK-003', trips: 3, distance: 450 },
-                { truck: 'TRK-004', trips: 11, distance: 2200 },
-                { truck: 'TRK-005', trips: 8, distance: 1680 }
-            ];
+        const profitTrendData = [
+            { month: 'Apr', revenue: 145000, expenses: 98000, profit: 47000 },
+            { month: 'May', revenue: 158000, expenses: 102000, profit: 56000 },
+            { month: 'Jun', revenue: 162000, expenses: 105000, profit: 57000 },
+            { month: 'Jul', revenue: 171000, expenses: 108000, profit: 63000 },
+            { month: 'Aug', revenue: 168000, expenses: 110000, profit: 58000 },
+            { month: 'Sep', revenue: 175000, expenses: 112000, profit: 63000 }
+        ];
 
-            const costBreakdownData = [
-                { name: 'Fuel', value: 45200, color: '#06b6d4' },
-                { name: 'Maintenance', value: 12800, color: '#8b5cf6' },
-                { name: 'Tolls', value: 5400, color: '#f59e0b' },
-                { name: 'Driver Wages', value: 38600, color: '#10b981' },
-                { name: 'Insurance', value: 8900, color: '#ef4444' }
-            ];
+        const maintenanceSchedule = [
+            { truck: 'TRK-001', service: 'Oil Change', dueDate: '2025-11-05', daysLeft: 9, status: 'ok' },
+            { truck: 'TRK-003', service: 'Brake Inspection', dueDate: '2025-10-29', daysLeft: 2, status: 'warning' },
+            { truck: 'TRK-007', service: 'Annual Service', dueDate: '2025-11-01', daysLeft: 5, status: 'warning' },
+            { truck: 'TRK-002', service: 'Tire Rotation', dueDate: '2025-11-15', daysLeft: 19, status: 'ok' }
+        ];
 
-            const profitTrendData = [
-                { month: 'Apr', revenue: 145000, expenses: 98000, profit: 47000 },
-                { month: 'May', revenue: 158000, expenses: 102000, profit: 56000 },
-                { month: 'Jun', revenue: 162000, expenses: 105000, profit: 57000 },
-                { month: 'Jul', revenue: 171000, expenses: 108000, profit: 63000 },
-                { month: 'Aug', revenue: 168000, expenses: 110000, profit: 58000 },
-                { month: 'Sep', revenue: 175000, expenses: 112000, profit: 63000 }
-            ];
-
-            const maintenanceSchedule = [
-                { truck: 'TRK-001', service: 'Oil Change', dueDate: '2025-11-05', daysLeft: 9, status: 'ok' },
-                { truck: 'TRK-003', service: 'Brake Inspection', dueDate: '2025-10-29', daysLeft: 2, status: 'warning' },
-                { truck: 'TRK-007', service: 'Annual Service', dueDate: '2025-11-01', daysLeft: 5, status: 'warning' },
-                { truck: 'TRK-002', service: 'Tire Rotation', dueDate: '2025-11-15', daysLeft: 19, status: 'ok' }
-            ];
+        function TruckingDashboard() {
+            const [selectedTruck, setSelectedTruck] = React.useState(null);
+            const [dateRange, setDateRange] = React.useState('7days');
+            const [filterDriver, setFilterDriver] = React.useState('all');
 
             const KPICard = ({ icon: Icon, title, value, unit, trend, color }) => (
                 React.createElement('div', { className: 'bg-gray-800 rounded-lg p-6 border border-gray-700' },
@@ -569,7 +542,7 @@
                     // Alerts Bar
                     React.createElement('div', { className: 'bg-gray-800 border-l-4 border-amber-500 rounded-lg p-4 mb-6' },
                         React.createElement('div', { className: 'flex items-start gap-3' },
-                            React.createElement(AlertTriangle, { className: 'text-amber-500 flex-shrink-0 mt-1', size: 20 }),
+                            React.createElement(lucideReact.AlertTriangle, { className: 'text-amber-500 flex-shrink-0 mt-1', size: 20 }),
                             React.createElement('div', { className: 'flex-1' },
                                 React.createElement('h3', { className: 'font-semibold text-white mb-2' }, `Active Alerts (${alerts.length})`),
                                 React.createElement('div', { className: 'space-y-2' },
@@ -590,16 +563,16 @@
                     )
                 ),
                 // KPI Cards
-                React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8' },
+                React.createElement('div', { className: 'grid grid-cols-1 md-grid-cols-2 lg-grid-cols-5 gap-4 mb-8' },
                     React.createElement(KPICard, {
-                        icon: Truck,
+                        icon: lucideReact.Truck,
                         title: 'Active Trucks',
                         value: kpiData.activeTrucks,
                         trend: 8,
                         color: 'bg-cyan-500'
                     }),
                     React.createElement(KPICard, {
-                        icon: MapPin,
+                        icon: lucideReact.MapPin,
                         title: 'Distance Covered',
                         value: kpiData.totalDistance.toLocaleString(),
                         unit: 'km',
@@ -607,7 +580,7 @@
                         color: 'bg-purple-500'
                     }),
                     React.createElement(KPICard, {
-                        icon: Fuel,
+                        icon: lucideReact.Fuel,
                         title: 'Avg Fuel Cost',
                         value: kpiData.avgFuelCost,
                         unit: '$/km',
@@ -615,7 +588,7 @@
                         color: 'bg-amber-500'
                     }),
                     React.createElement(KPICard, {
-                        icon: Clock,
+                        icon: lucideReact.Clock,
                         title: 'Downtime Hours',
                         value: kpiData.downtimeHours,
                         unit: 'hrs',
@@ -623,7 +596,7 @@
                         color: 'bg-red-500'
                     }),
                     React.createElement(KPICard, {
-                        icon: DollarSign,
+                        icon: lucideReact.DollarSign,
                         title: 'Profit per KM',
                         value: kpiData.profitPerKm,
                         unit: '$',
@@ -632,11 +605,11 @@
                     })
                 ),
                 // Main Content Grid
-                React.createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6' },
+                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-3 gap-6 mb-6' },
                     // Map View
-                    React.createElement('div', { className: 'lg:col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
+                    React.createElement('div', { className: 'lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(MapPin, { size: 20, className: 'text-cyan-500' }),
+                            React.createElement(lucideReact.MapPin, { size: 20, className: 'text-cyan-500' }),
                             'Fleet Location Overview'
                         ),
                         React.createElement('div', { className: 'bg-gray-900 rounded-lg h-80 flex items-center justify-center border border-gray-700 relative overflow-hidden' },
@@ -670,13 +643,13 @@
                                     React.createElement('button', {
                                         key: truck.id,
                                         onClick: () => setSelectedTruck(truck),
-                                        className: 'absolute bg-cyan-500 hover:bg-cyan-400 text-white rounded-full p-2 transition-all transform hover:scale-110 shadow-lg',
+                                        className: 'absolute bg-cyan-500 hover-bg-cyan-400 text-white rounded-full p-2 transition-all transform hover-scale-110 shadow-lg',
                                         style: { 
                                             left: `${20 + idx * 18}%`, 
                                             top: `${30 + idx * 12}%` 
                                         }
                                     },
-                                        React.createElement(Truck, { size: 16 })
+                                        React.createElement(lucideReact.Truck, { size: 16 })
                                     )
                                 )
                             ),
@@ -690,7 +663,7 @@
                                     ),
                                     React.createElement('button', {
                                         onClick: () => setSelectedTruck(null),
-                                        className: 'text-gray-400 hover:text-white'
+                                        className: 'text-gray-400 hover-text-white'
                                     }, '✕')
                                 )
                             )
@@ -714,7 +687,7 @@
                     // Maintenance Schedule
                     React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(Settings, { size: 20, className: 'text-purple-500' }),
+                            React.createElement(lucideReact.Settings, { size: 20, className: 'text-purple-500' }),
                             'Maintenance Schedule'
                         ),
                         React.createElement('div', { className: 'space-y-3' },
@@ -728,7 +701,7 @@
                                         React.createElement('h3', { className: 'font-semibold text-white' }, item.truck),
                                         React.createElement('span', { 
                                             className: `text-xs px-2 py-1 rounded ${
-                                                item.status === 'warning' ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'
+                                                item.status === 'warning' ? 'bg-amber-500-20 text-amber-400' : 'bg-green-500-20 text-green-400'
                                             }`
                                         }, `${item.daysLeft} days`)
                                     ),
@@ -739,74 +712,33 @@
                         )
                     )
                 ),
-                // Charts Row
-                React.createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6' },
+                // Charts Row - Using simple divs instead of Recharts
+                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-2 gap-6 mb-6' },
                     // Fuel Efficiency Trend
                     React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4 flex items-center gap-2' },
-                            React.createElement(TrendingUp, { size: 20, className: 'text-green-500' }),
+                            React.createElement(lucideReact.TrendingUp, { size: 20, className: 'text-green-500' }),
                             'Fuel Efficiency Trend'
                         ),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 250 },
-                            React.createElement(LineChart, { data: fuelEfficiencyData },
-                                React.createElement(CartesianGrid, { strokeDasharray: '3 3', stroke: '#374151' }),
-                                React.createElement(XAxis, { dataKey: 'day', stroke: '#9ca3af' }),
-                                React.createElement(YAxis, { stroke: '#9ca3af' }),
-                                React.createElement(Tooltip, { 
-                                    contentStyle: { backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' },
-                                    labelStyle: { color: '#f3f4f6' }
-                                }),
-                                React.createElement(Legend),
-                                React.createElement(Line, { type: 'monotone', dataKey: 'efficiency', stroke: '#06b6d4', strokeWidth: 2, name: 'Km/L' }),
-                                React.createElement(Line, { type: 'monotone', dataKey: 'target', stroke: '#f59e0b', strokeDasharray: '5 5', name: 'Target' })
-                            )
+                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
+                            'Chart visualization would appear here with Recharts'
                         )
                     ),
                     // Trip Performance
                     React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Trip Performance by Truck'),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 250 },
-                            React.createElement(BarChart, { data: tripPerformanceData },
-                                React.createElement(CartesianGrid, { strokeDasharray: '3 3', stroke: '#374151' }),
-                                React.createElement(XAxis, { dataKey: 'truck', stroke: '#9ca3af' }),
-                                React.createElement(YAxis, { stroke: '#9ca3af' }),
-                                React.createElement(Tooltip, { 
-                                    contentStyle: { backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' },
-                                    labelStyle: { color: '#f3f4f6' }
-                                }),
-                                React.createElement(Legend),
-                                React.createElement(Bar, { dataKey: 'trips', fill: '#8b5cf6', name: 'Trips' }),
-                                React.createElement(Bar, { dataKey: 'distance', fill: '#06b6d4', name: 'Distance (km)' })
-                            )
+                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
+                            'Chart visualization would appear here with Recharts'
                         )
                     )
                 ),
                 // Financial Analytics
-                React.createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-6' },
+                React.createElement('div', { className: 'grid grid-cols-1 lg-grid-cols-3 gap-6' },
                     // Cost Breakdown
                     React.createElement('div', { className: 'bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Cost Breakdown'),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 250 },
-                            React.createElement(PieChart, null,
-                                React.createElement(Pie, {
-                                    data: costBreakdownData,
-                                    cx: '50%',
-                                    cy: '50%',
-                                    labelLine: false,
-                                    label: ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`,
-                                    outerRadius: 80,
-                                    fill: '#8884d8',
-                                    dataKey: 'value'
-                                },
-                                    costBreakdownData.map((entry, index) =>
-                                        React.createElement(Cell, { key: `cell-${index}`, fill: entry.color })
-                                    )
-                                ),
-                                React.createElement(Tooltip, { 
-                                    contentStyle: { backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' },
-                                    formatter: (value) => `$${value.toLocaleString()}`
-                                })
-                            )
+                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
+                            'Pie chart visualization would appear here with Recharts'
                         ),
                         React.createElement('div', { className: 'mt-4 space-y-2' },
                             costBreakdownData.map((item, idx) =>
@@ -821,28 +753,15 @@
                         )
                     ),
                     // Profit Trend
-                    React.createElement('div', { className: 'lg:col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
+                    React.createElement('div', { className: 'lg-col-span-2 bg-gray-800 rounded-lg border border-gray-700 p-6' },
                         React.createElement('h2', { className: 'text-xl font-bold text-white mb-4' }, 'Monthly Profit & Expense Trend'),
-                        React.createElement(ResponsiveContainer, { width: '100%', height: 250 },
-                            React.createElement(BarChart, { data: profitTrendData },
-                                React.createElement(CartesianGrid, { strokeDasharray: '3 3', stroke: '#374151' }),
-                                React.createElement(XAxis, { dataKey: 'month', stroke: '#9ca3af' }),
-                                React.createElement(YAxis, { stroke: '#9ca3af' }),
-                                React.createElement(Tooltip, { 
-                                    contentStyle: { backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' },
-                                    labelStyle: { color: '#f3f4f6' },
-                                    formatter: (value) => `$${value.toLocaleString()}`
-                                }),
-                                React.createElement(Legend),
-                                React.createElement(Bar, { dataKey: 'revenue', fill: '#10b981', name: 'Revenue' }),
-                                React.createElement(Bar, { dataKey: 'expenses', fill: '#ef4444', name: 'Expenses' }),
-                                React.createElement(Bar, { dataKey: 'profit', fill: '#06b6d4', name: 'Profit' })
-                            )
+                        React.createElement('div', { className: 'h-64 flex items-center justify-center text-gray-400' },
+                            'Bar chart visualization would appear here with Recharts'
                         )
                     )
                 )
             );
-        };
+        }
 
         ReactDOM.render(React.createElement(TruckingDashboard), document.getElementById('root'));
     </script>
