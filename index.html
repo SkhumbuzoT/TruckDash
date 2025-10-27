@@ -6,6 +6,10 @@
     <title>PrimeChain Fleet Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -46,7 +50,7 @@
         .dashboard-header {
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             padding: 1rem 0;
@@ -282,69 +286,189 @@
             font-size: 1.25rem;
         }
         
+        /* Map Container Styles */
         .map-container {
             background-color: var(--bg-primary);
             border-radius: 12px;
-            height: 400px;
+            height: 500px;
             position: relative;
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
         
-        .map-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+        #fleetMap {
             height: 100%;
-            opacity: 0.1;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%2306b6d4" stroke-width="1"/><path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="%2306b6d4" stroke-width="0.5"/><path d="M40,40 L60,40 L60,60 L40,60 Z" fill="none" stroke="%2306b6d4" stroke-width="0.25"/></svg>');
-            background-size: 100px 100px;
+            width: 100%;
+            border-radius: 12px;
         }
         
+        /* Custom Leaflet Styles for Dark Theme */
+        .leaflet-container {
+            background: var(--bg-primary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+        
+        .leaflet-popup-tip {
+            background: var(--bg-secondary);
+        }
+        
+        .leaflet-control-zoom a {
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background: var(--bg-tertiary) !important;
+        }
+        
+        .leaflet-control-attribution {
+            background: rgba(27, 36, 51, 0.8) !important;
+            color: var(--text-tertiary) !important;
+        }
+        
+        .leaflet-control-attribution a {
+            color: var(--accent-primary) !important;
+        }
+        
+        /* Custom Truck Marker */
         .truck-marker {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
-            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid white;
             animation: pulse 2s infinite;
         }
         
-        .truck-marker:hover {
-            transform: scale(1.2);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+        .truck-marker i {
+            font-size: 14px;
+        }
+        
+        .truck-marker.active {
+            background: linear-gradient(135deg, var(--accent-success), #22c55e);
+        }
+        
+        .truck-marker.maintenance {
+            background: linear-gradient(135deg, var(--accent-warning), #f97316);
+        }
+        
+        .truck-marker.idle {
+            background: linear-gradient(135deg, var(--accent-danger), #dc2626);
         }
         
         @keyframes pulse {
             0% {
-                box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+                box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
             }
-            50% {
-                box-shadow: 0 4px 20px rgba(6, 182, 212, 0.8);
+            70% {
+                box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
             }
             100% {
-                box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+                box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
             }
         }
         
-        .truck-info {
+        /* Map Controls */
+        .map-controls {
             position: absolute;
-            bottom: 1.5rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 1.25rem;
-            border: 1px solid var(--accent-primary);
-            box-shadow: 0 10px 25px var(--shadow-color);
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .map-control-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .map-control-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+        
+        .legend-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .legend-color.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+        
+        .legend-color.maintenance {
+            background: linear-gradient(135deg, var(--accent-warning), #f97316);
+        }
+        
+        .legend-color.idle {
+            background: linear-gradient(135deg, var(--accent-danger), #dc2626);
+        }
+        
+        .truck-info {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid var(--accent-primary);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            max-width: 300px;
         }
         
         .truck-info-header {
@@ -357,61 +481,50 @@
         .truck-id {
             font-weight: 600;
             color: var(--accent-primary);
+            font-size: 1rem;
         }
         
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.25rem;
-            border-radius: 4px;
-            transition: all 0.2s;
+        .truck-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-weight: 500;
         }
         
-        .close-btn:hover {
-            color: var(--text-primary);
-            background-color: var(--bg-tertiary);
+        .status-active {
+            background-color: rgba(6, 182, 212, 0.2);
+            color: var(--accent-primary);
+        }
+        
+        .status-maintenance {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+        
+        .status-idle {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
         }
         
         .truck-details {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
         }
         
         .truck-detail {
+            display: flex;
+            justify-content: space-between;
             font-size: 0.875rem;
         }
         
         .truck-detail-label {
             color: var(--text-tertiary);
-            margin-bottom: 0.25rem;
         }
         
         .truck-detail-value {
             color: var(--text-primary);
             font-weight: 500;
-        }
-        
-        .legend {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
         }
         
         .maintenance-list {
@@ -735,57 +848,38 @@
                             <h3 class="card-title">Fleet Location Overview</h3>
                         </div>
                         <div class="map-container">
-                            <div class="map-background"></div>
+                            <div id="fleetMap"></div>
                             
-                            <!-- Truck Markers -->
-                            <div class="truck-marker" style="top: 30%; left: 20%;" onclick="selectTruck('TRK-001')">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <div class="truck-marker" style="top: 50%; left: 45%;" onclick="selectTruck('TRK-002')">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <div class="truck-marker" style="top: 65%; left: 70%;" onclick="selectTruck('TRK-004')">
-                                <i class="fas fa-truck"></i>
+                            <!-- Map Controls -->
+                            <div class="map-controls">
+                                <button class="map-control-btn" id="zoomInBtn" title="Zoom In">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="map-control-btn" id="zoomOutBtn" title="Zoom Out">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button class="map-control-btn" id="locateBtn" title="Reset View">
+                                    <i class="fas fa-crosshairs"></i>
+                                </button>
                             </div>
                             
-                            <!-- Selected Truck Info -->
-                            <div id="selectedTruckInfo" class="truck-info hidden">
-                                <div class="truck-info-header">
-                                    <h3 class="truck-id" id="truckId">TRK-001</h3>
-                                    <button class="close-btn" onclick="closeTruckInfo()">✕</button>
-                                </div>
-                                <div class="truck-details">
-                                    <div class="truck-detail">
-                                        <div class="truck-detail-label">Driver</div>
-                                        <div class="truck-detail-value" id="truckDriver">John Smith</div>
+                            <!-- Map Legend -->
+                            <div class="map-legend">
+                                <div class="legend-title">Truck Status</div>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <div class="legend-color active"></div>
+                                        <span>Active (18)</span>
                                     </div>
-                                    <div class="truck-detail">
-                                        <div class="truck-detail-label">Location</div>
-                                        <div class="truck-detail-value" id="truckLocation">Highway 401</div>
+                                    <div class="legend-item">
+                                        <div class="legend-color maintenance"></div>
+                                        <span>Maintenance (3)</span>
                                     </div>
-                                    <div class="truck-detail">
-                                        <div class="truck-detail-label">Status</div>
-                                        <div class="truck-detail-value">Active</div>
-                                    </div>
-                                    <div class="truck-detail">
-                                        <div class="truck-detail-label">Last Update</div>
-                                        <div class="truck-detail-value">2 hours ago</div>
+                                    <div class="legend-item">
+                                        <div class="legend-color idle"></div>
+                                        <span>Idle (3)</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="legend">
-                            <div class="legend-item">
-                                <div class="legend-color bg-cyan"></div>
-                                <span>Active (3)</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color bg-amber"></div>
-                                <span>Idle (1)</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color bg-red"></div>
-                                <span>Maintenance (1)</span>
                             </div>
                         </div>
                     </div>
@@ -938,33 +1032,157 @@
         </div>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
-        // Truck selection functionality
-        const trucks = {
-            'TRK-001': { driver: 'John Smith', location: 'Highway 401' },
-            'TRK-002': { driver: 'Sarah Johnson', location: 'Highway 10' },
-            'TRK-004': { driver: 'Mike Davis', location: 'Highway 427' }
-        };
-
-        function selectTruck(truckId) {
-            const info = document.getElementById('selectedTruckInfo');
-            const truckIdElement = document.getElementById('truckId');
-            const truckDriver = document.getElementById('truckDriver');
-            const truckLocation = document.getElementById('truckLocation');
-            
-            truckIdElement.textContent = truckId;
-            truckDriver.textContent = trucks[truckId].driver;
-            truckLocation.textContent = trucks[truckId].location;
-            
-            info.classList.remove('hidden');
-        }
-
-        function closeTruckInfo() {
-            document.getElementById('selectedTruckInfo').classList.add('hidden');
-        }
-
-        // Initialize charts when the page loads
+        // Initialize the map when the page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map
+            const map = L.map('fleetMap').setView([-28.4793, 24.6727], 5); // Center on South Africa
+            
+            // Add a tile layer (map background)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+            
+            // Sample truck data with South African locations
+            const trucks = [
+                {
+                    id: 'TRK-001',
+                    driver: 'John Smith',
+                    status: 'active',
+                    location: 'Johannesburg',
+                    coords: [-26.2041, 28.0473],
+                    lastUpdate: '2 hours ago',
+                    speed: '65 km/h',
+                    route: 'JHB → DBN'
+                },
+                {
+                    id: 'TRK-002',
+                    driver: 'Sarah Johnson',
+                    status: 'active',
+                    location: 'Cape Town',
+                    coords: [-33.9249, 18.4241],
+                    lastUpdate: '1 hour ago',
+                    speed: '72 km/h',
+                    route: 'CPT → JHB'
+                },
+                {
+                    id: 'TRK-003',
+                    driver: 'Mike Davis',
+                    status: 'maintenance',
+                    location: 'Durban Depot',
+                    coords: [-29.8587, 31.0218],
+                    lastUpdate: '5 days ago',
+                    speed: '0 km/h',
+                    route: 'In Maintenance'
+                },
+                {
+                    id: 'TRK-004',
+                    driver: 'James Wilson',
+                    status: 'active',
+                    location: 'Port Elizabeth',
+                    coords: [-33.9608, 25.6022],
+                    lastUpdate: '30 minutes ago',
+                    speed: '58 km/h',
+                    route: 'PE → East London'
+                },
+                {
+                    id: 'TRK-005',
+                    driver: 'Anna Brown',
+                    status: 'idle',
+                    location: 'Bloemfontein',
+                    coords: [-29.0852, 26.1596],
+                    lastUpdate: '3 hours ago',
+                    speed: '0 km/h',
+                    route: 'Waiting for dispatch'
+                },
+                {
+                    id: 'TRK-006',
+                    driver: 'Robert Taylor',
+                    status: 'active',
+                    location: 'Pretoria',
+                    coords: [-25.7479, 28.2293],
+                    lastUpdate: '45 minutes ago',
+                    speed: '68 km/h',
+                    route: 'PTA → JHB'
+                }
+            ];
+            
+            // Create custom icon for trucks
+            function createTruckIcon(status) {
+                const iconClass = `truck-marker ${status}`;
+                
+                return L.divIcon({
+                    className: iconClass,
+                    html: `<i class="fas fa-truck"></i>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+            }
+            
+            // Add truck markers to the map
+            trucks.forEach(truck => {
+                const marker = L.marker(truck.coords, {
+                    icon: createTruckIcon(truck.status)
+                }).addTo(map);
+                
+                // Create popup content
+                const popupContent = `
+                    <div class="truck-info">
+                        <div class="truck-info-header">
+                            <h3 class="truck-id">${truck.id}</h3>
+                            <span class="truck-status status-${truck.status}">${truck.status.charAt(0).toUpperCase() + truck.status.slice(1)}</span>
+                        </div>
+                        <div class="truck-details">
+                            <div class="truck-detail">
+                                <span class="truck-detail-label">Driver:</span>
+                                <span class="truck-detail-value">${truck.driver}</span>
+                            </div>
+                            <div class="truck-detail">
+                                <span class="truck-detail-label">Location:</span>
+                                <span class="truck-detail-value">${truck.location}</span>
+                            </div>
+                            <div class="truck-detail">
+                                <span class="truck-detail-label">Speed:</span>
+                                <span class="truck-detail-value">${truck.speed}</span>
+                            </div>
+                            <div class="truck-detail">
+                                <span class="truck-detail-label">Route:</span>
+                                <span class="truck-detail-value">${truck.route}</span>
+                            </div>
+                            <div class="truck-detail">
+                                <span class="truck-detail-label">Last Update:</span>
+                                <span class="truck-detail-value">${truck.lastUpdate}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+            });
+            
+            // Add map control functionality
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                map.zoomIn();
+            });
+            
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                map.zoomOut();
+            });
+            
+            document.getElementById('locateBtn').addEventListener('click', () => {
+                map.setView([-28.4793, 24.6727], 5);
+            });
+            
+            // Initialize charts
+            initializeCharts();
+        });
+        
+        function initializeCharts() {
             // Fuel Efficiency Chart
             const fuelCtx = document.getElementById('fuelChart').getContext('2d');
             const fuelGradient = fuelCtx.createLinearGradient(0, 0, 0, 400);
@@ -1184,7 +1402,7 @@
                     }
                 }
             });
-        });
+        }
     </script>
 </body>
 </html>
